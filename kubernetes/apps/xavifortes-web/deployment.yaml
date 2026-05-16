@@ -45,7 +45,7 @@ spec:
       containers:
         - name: web
           # CI pipeline updates this tag automatically — do not edit manually
-          image: ghcr.io/xavifortes/web:sha-45507f6cd3b3f3405fc4bbec655d6c9365ff8158
+          image: ghcr.io/xavifortes/web:sha-1311ccbd55772893f7fd30bf7a8e41e7164770c9
           imagePullPolicy: Always
           ports:
             - name: http
