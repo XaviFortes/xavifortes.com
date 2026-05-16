@@ -1,0 +1,59 @@
+---
+# kubernetes/apps/xavifortes-web/ingress.yaml
+#
+# Traefik IngressRoute for xavifortes.com.
+# TLS is terminated at Cloudflare (Full Strict) — Cloudflare presents its edge
+# cert to the user; this cert covers the Cloudflare → GRA8 → MAD1 leg.
+#
+# cert-manager issues a Let's Encrypt cert for xavifortes.com and stores it
+# in the `xavifortes-tls` Secret below. Traefik uses it for the backend leg.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: xavifortes-web
+  namespace: xavifortes
+  labels:
+    app: xavifortes-web
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`xavifortes.com`) || Host(`www.xavifortes.com`)
+      kind: Rule
+      services:
+        - name: xavifortes-web
+          port: 80
+      middlewares:
+        - name: www-redirect
+  tls:
+    secretName: xavifortes-tls
+
+---
+# Redirect www → apex
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: www-redirect
+  namespace: xavifortes
+spec:
+  redirectRegex:
+    regex: "^https://www\\.xavifortes\\.com/(.*)"
+    replacement: "https://xavifortes.com/${1}"
+    permanent: true
+
+---
+# cert-manager Certificate resource
+# Automatically provisions and renews the TLS cert via Let's Encrypt.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: xavifortes-tls
+  namespace: xavifortes
+spec:
+  secretName: xavifortes-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - xavifortes.com
+    - www.xavifortes.com

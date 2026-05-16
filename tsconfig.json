@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "jsxImportSource": "react",
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "include": ["apps/web/src"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,109 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const projects = [
+  {
+    icon: "◆",
+    label: "iOS · Swift",
+    title: "Strobel — Guitar Tuner",
+    status: "App Store",
+    desc: "Production iOS guitar tuner app built in Swift. Real-time pitch detection using AVAudioEngine and FFT-based fundamental frequency analysis. Sub-5ms latency from audio input to UI update.",
+    details: [
+      "AVAudioEngine tap → circular buffer → Autocorrelation + FFT hybrid for accurate low-frequency detection",
+      "Custom SwiftUI gauge component with smooth needle animation at 60fps",
+      "Multiple temperament presets (equal, just intonation) with concert pitch offset",
+      "Xcode Cloud CI/CD: automated TestFlight builds on every push, App Store submission on tag",
+      "Zero third-party dependencies — pure Apple frameworks",
+    ],
+    badges: ["Swift", "SwiftUI", "AVAudioEngine", "FFT", "Xcode Cloud"],
+  },
+  {
+    icon: "⬡",
+    label: "Rust · Tauri",
+    title: "Cross-Platform Desktop Tooling",
+    status: "Internal",
+    desc: "Tauri-based desktop apps wrapping complex CLI operations behind a clean GUI. Rust backend handles the heavy lifting; the frontend is a thin React/TypeScript layer.",
+    details: [
+      "SSH client wrapper with session multiplexing and key management UI",
+      "Infrastructure status dashboard pulling from Kubernetes API and Prometheus",
+      "Custom Tauri commands expose Rust structs as TypeScript types via serde",
+      "Bundled as a single binary for macOS and Linux",
+    ],
+    badges: ["Rust", "Tauri", "TypeScript", "React", "serde"],
+  },
+  {
+    icon: "🐍",
+    label: "Python",
+    title: "Infrastructure Automation & Bots",
+    status: "Production",
+    desc: "Python scripts and services that automate the boring parts of running infrastructure. Discord bots, alerting bridges, and backup orchestration.",
+    details: [
+      "Discord bot for Grafana alert routing: Prometheus → Alertmanager → Discord webhook with rich embeds",
+      "Automated Proxmox snapshot + B2 upload pipeline with retention policy",
+      "Minecraft server status bot with player count, TPS, and disk usage reporting",
+      "HAProxy stats scraper feeding InfluxDB for historical traffic analysis",
+    ],
+    badges: ["Python", "discord.py", "Proxmox API", "InfluxDB", "asyncio"],
+  },
+];
+---
+
+<Base
+  title="Software Engineering — xavifortes.com"
+  description="Swift iOS development, Rust/Tauri desktop apps, Python automation, and full-stack engineering."
+>
+  <Nav />
+
+  <main class="pt-14">
+    <section class="max-w-6xl mx-auto px-6 py-24">
+      <p class="section-label mb-4">software engineering</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        I write code, not just <span class="gradient-text">config files.</span>
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl leading-relaxed mb-16">
+        Platform engineers who can't write software are config managers. Here's the code
+        that runs on the infrastructure I build.
+      </p>
+
+      <div class="space-y-10">
+        {
+          projects.map((p) => (
+            <div class="card">
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
+                <div class="flex items-start gap-4">
+                  <span class="text-3xl">{p.icon}</span>
+                  <div>
+                    <p class="section-label mb-1">{p.label}</p>
+                    <h2 class="text-xl font-bold text-white">{p.title}</h2>
+                  </div>
+                </div>
+                <span class="code-badge self-start sm:self-auto">{p.status}</span>
+              </div>
+
+              <p class="text-slate-400 text-sm leading-relaxed mb-5">{p.desc}</p>
+
+              <ul class="space-y-2 mb-6">
+                {p.details.map((d) => (
+                  <li class="flex items-start gap-3 text-sm text-slate-400">
+                    <span class="text-brand mt-0.5 shrink-0">▸</span>
+                    {d}
+                  </li>
+                ))}
+              </ul>
+
+              <div class="flex flex-wrap gap-2">
+                {p.badges.map((b) => (
+                  <span class="code-badge">{b}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>

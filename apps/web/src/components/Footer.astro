@@ -1,0 +1,75 @@
+---
+---
+
+<footer class="border-t border-white/5 mt-24">
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <p class="font-mono text-sm font-semibold text-white mb-2">
+          <span class="text-brand">~/</span>xavifortes
+        </p>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Senior DevSecOps Engineer & Cloud Architect.<br />
+          Building the infra that makes things not fall over.
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <p class="section-label mb-4">pages</p>
+        <ul class="space-y-2">
+          {
+            [
+              ["/architecture", "architecture"],
+              ["/cloud", "cloud & devsecops"],
+              ["/software", "software engineering"],
+              ["/hardware", "hardware & mechanics"],
+            ].map(([href, label]) => (
+              <li>
+                <a href={href} class="text-sm text-slate-400 hover:text-white transition-colors font-mono">
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <p class="section-label mb-4">contact</p>
+        <ul class="space-y-2">
+          {
+            [
+              ["mailto:hi@xavifortes.com", "hi@xavifortes.com"],
+              ["https://github.com/xavifortes", "github/xavifortes"],
+              ["https://linkedin.com/in/xavifortes", "linkedin"],
+            ].map(([href, label]) => (
+              <li>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-slate-400 hover:text-brand-bright transition-colors font-mono"
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-slate-600 text-xs font-mono">
+        © {new Date().getFullYear()} Xavier Fortes. All rights reserved.
+      </p>
+      <p class="text-slate-600 text-xs font-mono flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accent-green animate-pulse inline-block"></span>
+        deployed on k3s · OVH MAD1 · via ArgoCD
+      </p>
+    </div>
+  </div>
+</footer>

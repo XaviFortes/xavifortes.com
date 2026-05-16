@@ -1,0 +1,275 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const layers = [
+  {
+    label: "Edge & Security",
+    color: "border-accent-green/30 bg-accent-green/5",
+    labelColor: "text-accent-green",
+    items: [
+      {
+        name: "Cloudflare WAF",
+        desc: "DDoS protection, bot management, custom WAF rules, rate limiting. SSL/TLS Full Strict mode. Acts as the global entry point for all traffic to xavifortes.com.",
+        badge: "IaC — Terraform",
+      },
+      {
+        name: "Cloudflare DNS",
+        desc: "DNS records managed 100% in Terraform via the cloudflare/cloudflare provider. No manual clicks in the dashboard. A record targets GRA8 HAProxy.",
+        badge: "IaC — Terraform",
+      },
+    ],
+  },
+  {
+    label: "Load Balancer / Bastion",
+    color: "border-brand/30 bg-brand/5",
+    labelColor: "text-brand-bright",
+    items: [
+      {
+        name: "OVH GRA8 — HAProxy",
+        desc: "OVH VPS in Gravelines (GRA8). HAProxy routes :80/:443 to MAD1 Traefik, :6443 to kubeadm API server, :25565 to Minecraft. Provisioned with OpenTofu.",
+        badge: "OVH GRA8 · 2vCPU / 2GB",
+      },
+    ],
+  },
+  {
+    label: "Kubernetes Cluster",
+    color: "border-accent-orange/30 bg-accent-orange/5",
+    labelColor: "text-accent-orange",
+    items: [
+      {
+        name: "k3s HA — OVH MAD1 (3 nodes)",
+        desc: "3-node etcd k3s cluster on OVH Madrid LocalZone. Each node is 4vCPU/8GB. OpenTofu provisions the VPS instances; Ansible bootstraps k3s. Kubeconfig fetched via SOPS-encrypted vars.",
+        badge: "k3s v1.33.5 · OVH MAD1",
+      },
+      {
+        name: "Traefik Ingress",
+        desc: "Handles TLS termination inside the cluster. Receives traffic from GRA8 HAProxy and routes to the correct Kubernetes service. IngressRoute CRDs used for routing.",
+        badge: "Helm · ArgoCD-managed",
+      },
+      {
+        name: "cert-manager",
+        desc: "Automatic TLS certificate provisioning from Let's Encrypt via ACME HTTP-01. Certificate resources live in the k8s manifests in this repo.",
+        badge: "Helm · ArgoCD-managed",
+      },
+      {
+        name: "Longhorn",
+        desc: "Distributed block storage across the 3 MAD1 nodes. Used for any stateful workloads. Portfolio site is stateless — Longhorn used by Matrix, Grafana, InfluxDB, etc.",
+        badge: "Helm · ArgoCD-managed",
+      },
+    ],
+  },
+  {
+    label: "GitOps — ArgoCD",
+    color: "border-brand/30 bg-brand/5",
+    labelColor: "text-brand-bright",
+    items: [
+      {
+        name: "ArgoCD",
+        desc: "Installed in the MAD1 cluster. Watches this repository's kubernetes/apps/ directory. Any merged change to the image tag or manifests is automatically applied to the cluster within ~3 minutes.",
+        badge: "App-of-Apps pattern",
+      },
+      {
+        name: "Image Tag Auto-Update",
+        desc: "The CI pipeline commits the new ghcr.io image SHA back to deployment.yaml on every merge to main. ArgoCD detects the drift and self-heals. No manual kubectl apply, ever.",
+        badge: "GitHub Actions → git commit",
+      },
+    ],
+  },
+  {
+    label: "CI/CD — GitHub Actions",
+    color: "border-slate-400/20 bg-slate-400/5",
+    labelColor: "text-slate-300",
+    items: [
+      {
+        name: "Lint & Format",
+        desc: "ESLint + Prettier on Astro/TypeScript. tofu fmt + tofu validate on the Cloudflare Terraform. Runs on every PR.",
+        badge: "Pull Request gate",
+      },
+      {
+        name: "Security Scans",
+        desc: "Trivy scans the built Docker image for CVEs (CRITICAL/HIGH = fail). Checkov scans all Terraform configs for misconfigurations. Both must pass before merge.",
+        badge: "Trivy · Checkov",
+      },
+      {
+        name: "Docker Build & Push",
+        desc: "Multi-stage Dockerfile: node:20-alpine builds Astro, nginx:alpine serves the static dist/. Image pushed to ghcr.io/xavifortes/web with both :sha-<SHA> and :latest tags.",
+        badge: "ghcr.io · multi-stage",
+      },
+      {
+        name: "Tag Bump Commit",
+        desc: "After a successful push, the workflow updates kubernetes/apps/xavifortes-web/deployment.yaml with the new image SHA and commits it back to main, triggering ArgoCD.",
+        badge: "GitOps trigger",
+      },
+    ],
+  },
+  {
+    label: "Container Registry",
+    color: "border-accent-green/20 bg-accent-green/5",
+    labelColor: "text-accent-green",
+    items: [
+      {
+        name: "GitHub Container Registry (ghcr.io)",
+        desc: "Private registry. Images tagged by git SHA for full traceability. ArgoCD pulls from ghcr.io using a k8s imagePullSecret. No self-hosted registry ops overhead.",
+        badge: "ghcr.io/xavifortes/web",
+      },
+    ],
+  },
+  {
+    label: "Homelab (Proxmox)",
+    color: "border-slate-500/20 bg-slate-500/5",
+    labelColor: "text-slate-400",
+    items: [
+      {
+        name: "almond — Ryzen 7 5800X / 64GB",
+        desc: "Primary Proxmox node. Hosts kubeadm k8s cluster (3 VMs), k3s-ha node (1 VM), and LXCs: cloudflared, WireGuard, PostgreSQL, Minecraft, coder-server.",
+        badge: "Proxmox 8.4",
+      },
+      {
+        name: "peanut — Ryzen 5 3600 / 32GB",
+        desc: "Secondary Proxmox node. Hosts: TrueNAS SCALE (ZFS NAS), Home Assistant OS, nginx proxy manager, AdGuard, Homarr, PostgreSQL replica.",
+        badge: "Proxmox 8.4",
+      },
+      {
+        name: "Self-Hosted GitHub Runners",
+        desc: "ARC (Actions Runner Controller) on the MAD1 k3s cluster provides ephemeral self-hosted runners for the shellnet-infrastructure repo CI. Terraform plans run inside the cluster with LAN access.",
+        badge: "ARC 0.9.3",
+      },
+    ],
+  },
+];
+
+const cicdSteps = [
+  { step: "1", label: "Push / PR", desc: "Developer pushes code to GitHub" },
+  { step: "2", label: "Lint + Scan", desc: "ESLint, Prettier, Trivy, Checkov" },
+  { step: "3", label: "Build Image", desc: "Multi-stage Docker build" },
+  { step: "4", label: "Push to ghcr.io", desc: "Tagged :sha-<SHA> + :latest" },
+  { step: "5", label: "Bump SHA", desc: "CI commits new tag to deployment.yaml" },
+  { step: "6", label: "ArgoCD Sync", desc: "Cluster self-heals within ~3min" },
+  { step: "7", label: "Live", desc: "xavifortes.com serves new build" },
+];
+---
+
+<Base
+  title="Architecture — xavifortes.com"
+  description="The full architecture behind xavifortes.com: k3s, ArgoCD, Cloudflare, Terraform, GitHub Actions, and more."
+>
+  <Nav />
+
+  <main class="pt-14">
+    <section class="max-w-6xl mx-auto px-6 py-24">
+      <!-- Header -->
+      <p class="section-label mb-4">architecture</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        The site <span class="gradient-text">is</span> the portfolio.
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl leading-relaxed mb-6">
+        This website doesn't just talk about DevSecOps — it runs on a stack that demonstrates it.
+        Every component is provisioned with IaC, every deployment is GitOps-driven, every
+        secret is encrypted at rest. Here's the full breakdown.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-16">
+        {
+          ["OpenTofu", "Terragrunt", "k3s v1.33.5", "ArgoCD", "GitHub Actions", "Cloudflare WAF", "Traefik", "cert-manager", "Trivy", "Checkov", "SOPS + Age", "ghcr.io"].map(
+            (t) => <span class="code-badge">{t}</span>
+          )
+        }
+      </div>
+
+      <!-- Flow diagram (ASCII-style) -->
+      <div class="card mb-16 overflow-x-auto">
+        <p class="section-label mb-6">request flow</p>
+        <div class="font-mono text-sm text-slate-300 leading-relaxed whitespace-nowrap min-w-max">
+          <div class="flex items-center gap-3">
+            <div class="bg-surface-3 border border-white/10 rounded px-3 py-2 text-accent-green">User</div>
+            <span class="text-slate-600">──HTTPS──▶</span>
+            <div class="bg-surface-3 border border-white/10 rounded px-3 py-2 text-accent-green">Cloudflare WAF</div>
+            <span class="text-slate-600">──proxy──▶</span>
+            <div class="bg-surface-3 border border-white/10 rounded px-3 py-2 text-brand-bright">GRA8 HAProxy</div>
+            <span class="text-slate-600">──:443──▶</span>
+            <div class="bg-surface-3 border border-white/10 rounded px-3 py-2 text-accent-orange">MAD1 Traefik</div>
+            <span class="text-slate-600">──route──▶</span>
+            <div class="bg-surface-3 border border-white/10 rounded px-3 py-2 text-brand">xavifortes-web pod</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CI/CD Pipeline -->
+      <div class="mb-16">
+        <p class="section-label mb-6">ci/cd pipeline</p>
+        <div class="flex flex-wrap gap-2 items-start">
+          {
+            cicdSteps.map((s, i) => (
+              <>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="w-8 h-8 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center font-mono text-xs text-brand-bright font-bold">
+                    {s.step}
+                  </div>
+                  <p class="font-mono text-xs text-white font-semibold text-center">{s.label}</p>
+                  <p class="text-xs text-slate-500 text-center max-w-[90px]">{s.desc}</p>
+                </div>
+                {i < cicdSteps.length - 1 && (
+                  <span class="text-slate-700 font-mono text-xl mt-2">──▶</span>
+                )}
+              </>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Architecture layers -->
+      <div class="space-y-6">
+        <p class="section-label mb-6">full stack breakdown</p>
+        {
+          layers.map((layer) => (
+            <div class={`border rounded-xl p-6 ${layer.color}`}>
+              <p class={`section-label mb-5 ${layer.labelColor}`}>{layer.label}</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {layer.items.map((item) => (
+                  <div class="bg-surface-0/50 rounded-lg p-4">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                      <h3 class="text-white text-sm font-semibold">{item.name}</h3>
+                      <span class="code-badge shrink-0">{item.badge}</span>
+                    </div>
+                    <p class="text-slate-400 text-xs leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Source links -->
+      <div class="mt-16 card">
+        <p class="section-label mb-4">source code</p>
+        <p class="text-slate-400 text-sm mb-5">
+          Both repositories are public. Read the code, not just the claims.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="https://github.com/xavifortes/xavifortes.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-ghost text-sm flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            xavifortes/xavifortes.com
+          </a>
+          <a
+            href="https://github.com/xavifortes/shellnet-infrastructure"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-ghost text-sm flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            xavifortes/shellnet-infrastructure
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>

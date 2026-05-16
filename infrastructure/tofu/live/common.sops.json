@@ -1,0 +1,22 @@
+{
+	"state_bucket_name": "ENC[AES256_GCM,data:XjiNe0FEeJTNGWbbDttP2Q==,iv:gyD72wVtuyr3ql7pUPOOy56cLVBB7gfqkFpiOxJSwuE=,tag:xJ3hOpyQAg3haCZUuJulWw==,type:str]",
+	"state_access_key": "ENC[AES256_GCM,data:tBpRthRevDHsIN/uJMXgY5DyZkvR0xHz0Q==,iv:KdKwO4IotXwzKlyEKkDMgcJOypsssqdpOGZe2qvEEh4=,tag:gOGXyFof4oqErjleX/OsGg==,type:str]",
+	"state_secret_key": "ENC[AES256_GCM,data:8TbTLpCQFpy9SoQttkFKNG3x9BXytC81DMnCjHJOqg==,iv:TbtrXom7H1x1ihotqNMt9WerFYZtq2kGsiM/cADhShk=,tag:d55PmZ7L6GQbf8UTLyCNqQ==,type:str]",
+	"state_endpoint": "ENC[AES256_GCM,data:VxsN7reRH+iz1pkYL7GG7d/SeUqfI1nGNgUKzxZ08dDi,iv:RCdOJIvqd1eHD3XNpNgKFfCcwx5LJ+4i+oIRlz30kM4=,tag:NKubciPJ3Z9A3S1u1yLlHw==,type:str]",
+	"sops": {
+		"age": [
+			{
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzRW5qUjBtUkREdzRYamd5\ndG95L1k0ZGZoaFhZaHFseW1JaVZIaGxSdGxrCnNIb3BTSy9BeFN0cjY4UWpmMWlS\nZ0c5eWUwYUFBV0pJTXkxeTRaTW5nbzQKLS0tIHRlc29TN3BhekNTcDhPVisrQUdx\nZm5Md0NGNGFoT3d4ZlE1RnZJWjN3YUEK+ywagS9tYsLGpnWg15TBuzwTypYpQnVT\ngMLUhYHU+nmhsUj9lGGbW+AhyOxhx1DieGDhnrLz3G67uslBcj938Q==\n-----END AGE ENCRYPTED FILE-----\n",
+				"recipient": "age1kttje7qaqggnssmu4a40ptm649wthp0twmd4c9jsjstkpnuptqdqp3fkc0"
+			},
+			{
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB1UmFpb2loSVRzYjN0M1lm\nVWllbkpCdC9oSitTVktHNVFvb3B0QldWUEFrCldmRWFtSC9DTDBkTDgrSWtyRVZ4\ncGk0YWgwZlNMUFMySUYvdjZjVFcxaTAKLS0tIFoxNXUrbXRWRmswTWZhbzJmbWpa\nakg2d09KQ3R1TEd4QTlUWDI0amxqSmMKuOfT90UjtLiYs83Vuu7XO7tD0ZhBzzAN\n8kdn650d09Sz5XaJAz9sqiXPsAVAgNS4+F5Z4Su9CyezBQQ/lVj8eg==\n-----END AGE ENCRYPTED FILE-----\n",
+				"recipient": "age15m998ttvguwq46xpz4e6yvdaaprxzucqr33t98c3mtgrlcymwgfsfew9ch"
+			}
+		],
+		"lastmodified": "2026-05-16T15:51:36Z",
+		"mac": "ENC[AES256_GCM,data:Rw2vENyfdaPvC8R3kj4t3GO8ZzTPEkTa9BkWYP0xRj6223c96OtKJkEVzLtq/yC4bfKP5RQBWwMMHvlc5y6faPZVnQS8ZWrlj30au1vr8PccUUSmXnNri+lEKZTDblJM2p8035yhkDpmb5mslqrC9XTJeLKMFc2HFVAiXFUDiqM=,iv:fWNv/pXePmYeUCIu5byskZwj/88NurVun0Qab9SES3I=,tag:z5P4uYuzfsEUrdltX3/t8Q==,type:str]",
+		"unencrypted_suffix": "_unencrypted",
+		"version": "3.13.0"
+	}
+}

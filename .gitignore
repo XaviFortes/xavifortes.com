@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+.astro/
+out/
+build/
+
+# Env files — never commit these
+.env
+.env.local
+.env.production
+.env*.local
+
+# Terraform / OpenTofu
+**/.terraform/
+**/.terragrunt-cache/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+
+# SOPS — never commit decrypted/plaintext secrets
+# *.sops.json  files ARE committed (SOPS-encrypted — safe)
+# *.json       plain files are NOT (intermediate, deleted by bootstrap script)
+# *.json.tpl   ARE committed (templates with placeholder values — safe)
+**/secrets.json
+**/common.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Docker
+.dockerignore

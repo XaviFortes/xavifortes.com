@@ -1,0 +1,18 @@
+---
+# kubernetes/apps/xavifortes-web/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: xavifortes-web
+  namespace: xavifortes
+  labels:
+    app: xavifortes-web
+spec:
+  selector:
+    app: xavifortes-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+  type: ClusterIP

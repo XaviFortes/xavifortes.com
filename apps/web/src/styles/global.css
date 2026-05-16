@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    @apply bg-surface-0 text-slate-100 font-sans;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand/30 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-brand/40 rounded-full;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-bright via-accent-green to-brand bg-clip-text text-transparent;
+  }
+
+  .card {
+    @apply bg-surface-2 border border-white/5 rounded-xl p-6 hover:border-brand/30 transition-colors duration-300;
+  }
+
+  .code-badge {
+    @apply font-mono text-xs bg-surface-3 text-accent-green px-2 py-0.5 rounded border border-white/10;
+  }
+
+  .section-label {
+    @apply font-mono text-xs text-brand-bright uppercase tracking-widest;
+  }
+
+  .nav-link {
+    @apply text-sm text-slate-400 hover:text-white transition-colors duration-200 font-mono;
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 bg-brand hover:bg-brand-bright text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg shadow-brand/20;
+  }
+
+  .btn-ghost {
+    @apply px-5 py-2.5 border border-white/10 hover:border-brand/50 text-slate-300 hover:text-white text-sm font-medium rounded-lg transition-all duration-200;
+  }
+}
+
+/* Mermaid diagram theming */
+.mermaid {
+  @apply bg-surface-2 rounded-xl p-6 overflow-x-auto;
+}
+
+/* MDX prose */
+.prose {
+  @apply text-slate-300;
+
+  h1, h2, h3, h4 {
+    @apply text-white;
+  }
+
+  a {
+    @apply text-brand-bright hover:text-accent-green transition-colors;
+  }
+
+  code {
+    @apply font-mono text-accent-green bg-surface-3 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  pre {
+    @apply bg-surface-2 border border-white/5 rounded-xl;
+  }
+
+  blockquote {
+    @apply border-l-brand text-slate-400;
+  }
+}

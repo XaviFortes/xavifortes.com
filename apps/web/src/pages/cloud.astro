@@ -1,0 +1,127 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const sections = [
+  {
+    id: "migrations",
+    icon: "☁",
+    label: "Enterprise Cloud",
+    title: "Azure to GCP — Full Migration",
+    content: `Executed a live migration of production workloads from Azure to GCP with zero downtime. The strategy involved a parallel-run phase where both clouds handled traffic simultaneously, giving us a rollback window with no user impact.
+
+Key areas:
+- **IAM redesign**: Mapped Azure AD roles to GCP IAM with least-privilege service accounts. Removed overly-permissive legacy roles that had accumulated over years.
+- **Networking**: Re-architect VNet → VPC. Set up VPC peering, Private Service Connect, and re-established BGP sessions with the on-prem network.
+- **Perimeter security**: Replaced Azure Firewall with Cloud Armor. Wrote DDoS policies and WAF rules that matched the original ruleset while adding improvements.
+- **Data migration**: BigQuery migrations via Datastream. Cloud SQL for PostgreSQL with minimal replication lag.
+- **CI/CD pivot**: Migrated Azure DevOps pipelines to Cloud Build and GitHub Actions without disrupting release cadence.`,
+    badges: ["GCP", "Azure", "IAM", "VPC", "Cloud Armor", "Terraform"],
+  },
+  {
+    id: "kubernetes",
+    icon: "⎈",
+    label: "Kubernetes",
+    title: "k3s HA Cluster — OVH MAD1",
+    content: `Three-node etcd k3s cluster on OVH's Madrid LocalZone. Every node is provisioned by OpenTofu (ovh/ovh provider) and bootstrapped by Ansible.
+
+Architecture decisions:
+- **etcd quorum**: 3 masters, no dedicated worker nodes at this scale. All masters are schedulable. Etcd data backed up to Backblaze B2.
+- **Ingress**: Traefik as the ingress controller. IngressRoute CRDs for precise routing control. TLS handled by cert-manager (Let's Encrypt ACME HTTP-01).
+- **Storage**: Longhorn for distributed block storage. Replicated across 2 nodes for redundancy (3rd node = witness). Used by Matrix Synapse, Grafana, InfluxDB.
+- **Secrets**: Kubernetes Secrets encrypted at the API server level. External secrets fed via SOPS-encrypted Ansible vars at bootstrap time.
+- **Monitoring**: Grafana + InfluxDB + Mosquitto for MQTT telemetry from homelab sensors.
+- **GitOps**: ArgoCD watches the shellnet-infrastructure and xavifortes.com repos. Sync is automated with self-heal enabled.`,
+    badges: ["k3s", "etcd", "Traefik", "cert-manager", "Longhorn", "ArgoCD", "Ansible"],
+  },
+  {
+    id: "homelab",
+    icon: "▣",
+    label: "Homelab",
+    title: "Dual Proxmox + TrueNAS + Unifi",
+    content: `Full on-premises lab running production-grade workloads on consumer hardware. Two Proxmox 8.4 nodes, a TrueNAS SCALE NAS, and a Ubiquiti Unifi stack for networking.
+
+Infrastructure:
+- **almond** (Ryzen 7 5800X / 64GB): kubeadm k8s cluster (3 VMs), k3s-ha node, LXCs for cloudflared, WireGuard, PostgreSQL, Minecraft, coder-server, ttyd.
+- **peanut** (Ryzen 5 3600 / 32GB): TrueNAS SCALE (ZFS with spinning + SSD pool), Home Assistant OS, nginx proxy manager, AdGuard Home, Homarr dashboard, PostgreSQL replica.
+- **Networking**: Ubiquiti UDM-Pro as router. VLANs for homelab, IoT, trusted, and guest. A DMZ VLAN for anything externally accessible. Dedicated IP from ISP with custom BGP routing.
+- **Remote access**: WireGuard VPN for LAN access. cloudflared for zero-trust tunnel to select services. All inbound ports blocked except the explicit allow-list.
+- **Backups**: All VM/LXC configs backed up to B2 via Proxmox Backup Server. TrueNAS ZFS snapshots replicated offsite.`,
+    badges: ["Proxmox", "TrueNAS", "Unifi", "WireGuard", "ZFS", "Home Assistant"],
+  },
+  {
+    id: "gameservers",
+    icon: "🎮",
+    label: "Game Server Ops",
+    title: "Minecraft, Project Zomboid & RimWorld",
+    content: `Running game servers at scale is real systems administration. Persistent state, latency SLAs, backup automation, mod pipeline management — the same skills, different workloads.
+
+Minecraft:
+- **Platform**: LXC container on almond (Proxmox), 8GB RAM allocated, dedicated virtual CPU cores.
+- **Automation**: Custom scripts for mod update pipelines (HUGO datapack, Cobblemon, UHC modes). Automated backups on schedule to B2. Crash-loop detection with auto-restart.
+- **Networking**: Routed through GRA8 HAProxy on :25565. Cloudflare Spectrum for DDoS protection on the Minecraft port.
+
+Project Zomboid & RimWorld:
+- Dedicated server instances with persistent world state managed as Proxmox VM snapshots.
+- Network latency optimisation: dedicated NICs, CPU pinning, NUMA-aware scheduling for consistent tick rates.
+- Player save file management automated with versioned backups.`,
+    badges: ["Proxmox LXC", "HAProxy", "Bash automation", "B2 backups"],
+  },
+];
+---
+
+<Base
+  title="Cloud & DevSecOps — xavifortes.com"
+  description="Enterprise cloud migrations, Kubernetes operations, homelab infrastructure, and game server engineering."
+>
+  <Nav />
+
+  <main class="pt-14">
+    <section class="max-w-6xl mx-auto px-6 py-24">
+      <p class="section-label mb-4">cloud & devsecops</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        Infrastructure is <span class="gradient-text">the product.</span>
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl leading-relaxed mb-16">
+        From enterprise cloud migrations to bare-metal homelab operations.
+        Every environment is code, every secret is encrypted, every deployment is reproducible.
+      </p>
+
+      <div class="space-y-12">
+        {
+          sections.map((s) => (
+            <div id={s.id} class="card">
+              <div class="flex items-start gap-4 mb-6">
+                <span class="text-3xl">{s.icon}</span>
+                <div class="flex-1">
+                  <p class="section-label mb-1">{s.label}</p>
+                  <h2 class="text-xl font-bold text-white">{s.title}</h2>
+                </div>
+              </div>
+              <div class="prose prose-sm max-w-none mb-6 text-slate-400 leading-relaxed whitespace-pre-line">
+                {s.content.split('\n').map((line) => {
+                  if (line.startsWith('**') || line.includes('**')) {
+                    return <p class="text-slate-300" set:html={line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')} />;
+                  }
+                  if (line.startsWith('- ')) {
+                    return <p class="text-slate-400 pl-4" set:html={"• " + line.slice(2).replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-200">$1</strong>')} />;
+                  }
+                  if (line.trim() === '') return <br />;
+                  return <p>{line}</p>;
+                })}
+              </div>
+              <div class="flex flex-wrap gap-2">
+                {s.badges.map((b) => (
+                  <span class="code-badge">{b}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>

@@ -1,0 +1,108 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const sections = [
+  {
+    icon: "🔧",
+    label: "Automotive",
+    title: "Lexus IS250 — 4GR-FSE Engine & CAN Bus",
+    items: [
+      "Complete top-end service: valve clearance adjustment on the 4GR-FSE, torque sequence, re-seating camshaft caps with proper bearing crush.",
+      "Diagnosed intermittent misfire via OBD-II live data + oscilloscope on injector waveforms. Root cause: carbon buildup on direct injection valves — descarbonized intake ports without full teardown using walnut blasting technique.",
+      "CAN bus reverse engineering: tapped the OBD port, logged raw CAN frames, mapped proprietary Toyota PIDs for oil temp, tranny temp, and throttle position not exposed by standard OBD-II Mode 01.",
+      "Programmed a custom CAN sniffer on an ESP32 + MCP2515 module to log to SD card and broadcast parsed values over BLE to a custom iOS app.",
+      "Full brake system refresh: braided stainless lines, Brembo calipers, Pagid RS pads, bedding procedure.",
+    ],
+    badges: ["4GR-FSE", "CAN bus", "ESP32", "OBD-II", "Direct Injection"],
+  },
+  {
+    icon: "🏍",
+    label: "Motorcycle",
+    title: "Suzuki GSX650F — Structural & Mechanical",
+    items: [
+      "Full engine out service: valve shim replacement, chain and sprocket, coolant system flush, stator and regulator/rectifier swap after charging fault.",
+      "Frame and subframe: repaired cracked subframe weld, powder-coated bare frame sections, replaced corroded fasteners with A4 stainless throughout.",
+      "Suspension: fork oil replacement, spring preload spacers for weight-adjusted sag, rear shock nitrogen recharge.",
+      "Electrical: full loom audit, crimped connector replacement, added dual USB-C charge ports to switched ignition circuit with blade fuse protection.",
+    ],
+    badges: ["GSX650F", "Suspension", "Electrical", "Frame repair"],
+  },
+  {
+    icon: "🚐",
+    label: "Van",
+    title: "Nissan NV200 — Workshop Van Build",
+    items: [
+      "Converted rear cargo area to a mobile workshop: 18mm ply floor, wall panels, aluminium extrusion shelving rated for 80kg per shelf.",
+      "Electrical: 200Ah LiFePO4 battery bank, 40A DC-DC charger from alternator, 200W roof solar via MPPT controller, 2000W pure sine inverter. Full BMS monitoring over BLE.",
+      "Diagnostic bench: oscilloscope, bench power supply, CAN analyser, soldering station — all running off the battery bank.",
+    ],
+    badges: ["LiFePO4", "DC-DC", "Solar MPPT", "NV200"],
+  },
+  {
+    icon: "🎬",
+    label: "A/V Production",
+    title: "High-Fidelity Recording & Video Setup",
+    items: [
+      "Audio: DJI Mic 2 wireless lavalier system for field recording. Rode NTG3 shotgun for controlled environments. Interface: Focusrite Scarlett 4i4. Monitoring: Beyerdynamic DT 770 Pro (80Ω).",
+      "Video: DJI Osmo Pocket 3 for run-and-gun. Full 4K60 workflow into Final Cut Pro on macOS. LUT library for consistent colour grading across OVH datacenter tours and homelab documentation videos.",
+      "Streaming setup: OBS with NDI source from secondary machine for overlays. RTMP to multiple targets simultaneously via restream.",
+    ],
+    badges: ["DJI Mic 2", "Rode NTG3", "Final Cut Pro", "OBS", "Focusrite"],
+  },
+];
+---
+
+<Base
+  title="Hardware & Mechanics — xavifortes.com"
+  description="Automotive engineering, motorcycle mechanics, CAN bus programming, and A/V production."
+>
+  <Nav />
+
+  <main class="pt-14">
+    <section class="max-w-6xl mx-auto px-6 py-24">
+      <p class="section-label mb-4">hardware & mechanics</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        Engineering is engineering,<br />
+        <span class="gradient-text">regardless of the domain.</span>
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl leading-relaxed mb-16">
+        The same diagnostic mindset that traces a k8s pod failure traces an intermittent
+        engine misfire. The same documentation discipline that writes runbooks writes
+        service manuals.
+      </p>
+
+      <div class="space-y-10">
+        {
+          sections.map((s) => (
+            <div class="card">
+              <div class="flex items-start gap-4 mb-5">
+                <span class="text-3xl">{s.icon}</span>
+                <div>
+                  <p class="section-label mb-1">{s.label}</p>
+                  <h2 class="text-xl font-bold text-white">{s.title}</h2>
+                </div>
+              </div>
+              <ul class="space-y-3 mb-6">
+                {s.items.map((item) => (
+                  <li class="flex items-start gap-3 text-sm text-slate-400 leading-relaxed">
+                    <span class="text-brand mt-0.5 shrink-0">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div class="flex flex-wrap gap-2">
+                {s.badges.map((b) => (
+                  <span class="code-badge">{b}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>

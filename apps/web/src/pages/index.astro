@@ -1,0 +1,194 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+const metrics = [
+  { value: "40%", label: "infra cost reduction", detail: "Azure → GCP migration" },
+  { value: "~0", label: "downtime migrations", detail: "live traffic, zero outage" },
+  { value: "15+", label: "services automated", detail: "deploy pipelines end-to-end" },
+  { value: "3 DC", label: "datacenters managed", detail: "homelab + OVH MAD + OVH GRA" },
+];
+
+const stack = [
+  { name: "Kubernetes / k3s", icon: "⎈" },
+  { name: "Terraform / OpenTofu", icon: "◈" },
+  { name: "ArgoCD", icon: "⟳" },
+  { name: "GitHub Actions", icon: "⚡" },
+  { name: "Cloudflare", icon: "☁" },
+  { name: "Ansible", icon: "⚙" },
+  { name: "Proxmox", icon: "▣" },
+  { name: "SOPS + Age", icon: "🔐" },
+  { name: "Rust / Python", icon: "⬡" },
+  { name: "Swift / iOS", icon: "◆" },
+  { name: "Trivy / Checkov", icon: "⛨" },
+  { name: "Grafana / InfluxDB", icon: "◎" },
+];
+
+const highlights = [
+  {
+    icon: "☁",
+    label: "Cloud Migrations",
+    title: "Azure to GCP — Zero Downtime",
+    desc: "Full migration strategy across IAM, networking, and perimeter security. No dropped packets. No missed deployments.",
+    href: "/cloud",
+  },
+  {
+    icon: "⎈",
+    label: "Kubernetes",
+    title: "k3s HA on OVH — GitOps End-to-End",
+    desc: "3-node etcd cluster on OVH MAD1. Traefik, cert-manager, Longhorn, ArgoCD. Every change is a git commit.",
+    href: "/cloud",
+  },
+  {
+    icon: "▣",
+    label: "Homelab",
+    title: "Dual Proxmox Nodes, DMZ, Bare Metal",
+    desc: "96GB RAM across two nodes. TrueNAS, Home Assistant, VMs, LXCs. Unifi networking with a real DMZ and dedicated IP.",
+    href: "/cloud",
+  },
+  {
+    icon: "◆",
+    label: "iOS Engineering",
+    title: "Strobel — Guitar Tuner App",
+    desc: "Swift audio DSP, real-time pitch detection, App Store CI/CD pipeline. 5-star precision, production-quality code.",
+    href: "/software",
+  },
+];
+---
+
+<Base>
+  <Nav />
+
+  <main>
+    <!-- Hero -->
+    <section class="min-h-screen flex flex-col justify-center pt-14">
+      <div class="max-w-6xl mx-auto px-6 py-24 md:py-32">
+        <div class="max-w-3xl">
+          <p class="section-label mb-5 animate-fade-in">available for contracts</p>
+          <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-6 animate-slide-up">
+            Senior DevSecOps Engineer<br />
+            <span class="gradient-text">& Cloud Architect.</span>
+          </h1>
+          <p class="text-lg md:text-xl text-slate-400 leading-relaxed mb-10 max-w-2xl animate-slide-up">
+            Specializing in secure, scalable infrastructure, cloud migrations, and
+            full-stack automation. I build the platform so your product doesn't fall over.
+          </p>
+          <div class="flex flex-wrap gap-4 animate-slide-up">
+            <a href="/architecture" class="btn-primary">
+              See the architecture →
+            </a>
+            <a href="mailto:hi@xavifortes.com" class="btn-ghost">
+              Let's talk rates
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal snippet -->
+        <div class="mt-16 bg-surface-2 border border-white/5 rounded-xl overflow-hidden max-w-2xl animate-fade-in">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-surface-3">
+            <div class="w-3 h-3 rounded-full bg-red-500/70"></div>
+            <div class="w-3 h-3 rounded-full bg-accent-orange/70"></div>
+            <div class="w-3 h-3 rounded-full bg-accent-green/70"></div>
+            <span class="ml-2 font-mono text-xs text-slate-500">xavifortes@ovh-mad1</span>
+          </div>
+          <pre class="p-5 font-mono text-sm leading-relaxed overflow-x-auto"><code><span class="text-accent-green">❯</span> <span class="text-white">kubectl get nodes -o wide</span>
+<span class="text-slate-400">NAME            STATUS   ROLES         AGE   VERSION
+mad1-master-1   Ready    etcd,master   42d   v1.33.5+k3s1
+mad1-master-2   Ready    etcd,master   42d   v1.33.5+k3s1
+mad1-master-3   Ready    etcd,master   42d   v1.33.5+k3s1</span>
+
+<span class="text-accent-green">❯</span> <span class="text-white">argocd app list</span>
+<span class="text-slate-400">NAME              CLUSTER    NAMESPACE      STATUS   HEALTH
+xavifortes-web    in-cluster xavifortes     Synced   Healthy
+arc-controller    in-cluster arc-systems    Synced   Healthy
+cert-manager      in-cluster cert-manager   Synced   Healthy
+traefik           in-cluster kube-system    Synced   Healthy</span>
+
+<span class="text-accent-green">❯</span> <span class="text-white">_</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics banner -->
+    <section class="border-y border-white/5 bg-surface-1">
+      <div class="max-w-6xl mx-auto px-6 py-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {
+            metrics.map((m) => (
+              <div class="text-center">
+                <p class="text-3xl md:text-4xl font-bold gradient-text font-mono">{m.value}</p>
+                <p class="text-slate-300 text-sm font-medium mt-1">{m.label}</p>
+                <p class="text-slate-500 text-xs mt-0.5 font-mono">{m.detail}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights -->
+    <section class="max-w-6xl mx-auto px-6 py-24">
+      <p class="section-label mb-3">work</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-white mb-12">
+        What I actually build
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {
+          highlights.map((h) => (
+            <a href={h.href} class="card group flex gap-5 no-underline">
+              <span class="text-2xl mt-0.5 text-brand">{h.icon}</span>
+              <div>
+                <p class="section-label mb-1">{h.label}</p>
+                <h3 class="text-white font-semibold mb-2 group-hover:text-brand-bright transition-colors">
+                  {h.title}
+                </h3>
+                <p class="text-slate-400 text-sm leading-relaxed">{h.desc}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section class="border-t border-white/5 bg-surface-1">
+      <div class="max-w-6xl mx-auto px-6 py-16">
+        <p class="section-label mb-8 text-center">daily drivers</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          {
+            stack.map((s) => (
+              <div class="flex items-center gap-2 bg-surface-2 border border-white/5 rounded-lg px-4 py-2 hover:border-brand/30 transition-colors">
+                <span class="text-brand">{s.icon}</span>
+                <span class="font-mono text-sm text-slate-300">{s.name}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="max-w-6xl mx-auto px-6 py-24 text-center">
+      <p class="section-label mb-4">ready to hire</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-5">
+        Your infra deserves an engineer<br />
+        <span class="gradient-text">who built their own.</span>
+      </h2>
+      <p class="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
+        Available for senior contracts in cloud architecture, platform engineering,
+        and DevSecOps. Remote-first. Results-first.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="mailto:hi@xavifortes.com" class="btn-primary text-center">
+          Send me an email
+        </a>
+        <a href="/architecture" class="btn-ghost text-center">
+          Review the architecture
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
