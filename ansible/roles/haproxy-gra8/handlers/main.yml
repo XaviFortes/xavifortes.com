@@ -1,0 +1,8 @@
+---
+# ansible/roles/haproxy-gra8/handlers/main.yml
+
+- name: reload haproxy
+  ansible.builtin.systemd:
+    name: haproxy
+    state: reloaded
+  become: true

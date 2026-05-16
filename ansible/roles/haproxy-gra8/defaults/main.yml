@@ -1,0 +1,7 @@
+---
+# ansible/roles/haproxy-gra8/defaults/main.yml
+#
+# Non-sensitive defaults for the haproxy-gra8 role.
+# Sensitive values (IPs, domains) are in group_vars/gra8/vars.sops.yml (SOPS-encrypted).
+
+haproxy_config_path: /etc/haproxy/haproxy.cfg

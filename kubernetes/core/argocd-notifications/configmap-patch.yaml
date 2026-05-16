@@ -1,0 +1,99 @@
+---
+# kubernetes/core/argocd-notifications/configmap-patch.yaml
+#
+# Patches the argocd-notifications-cm ConfigMap to add:
+#   - Telegram notification service
+#   - Templates for sync/health events
+#   - Default subscriptions for all apps
+#
+# Apply with:
+#   kubectl apply -f kubernetes/core/argocd-notifications/configmap-patch.yaml
+#
+# After applying, annotate apps to subscribe (or use defaultTriggers below):
+#   kubectl annotate application xavifortes-web \
+#     notifications.argoproj.io/subscribe.on-sync-failed.telegram="" \
+#     notifications.argoproj.io/subscribe.on-health-degraded.telegram="" \
+#     notifications.argoproj.io/subscribe.on-sync-succeeded.telegram="" \
+#     -n argocd
+#
+# Replace <YOUR_TELEGRAM_CHAT_ID> with your actual chat ID (e.g. -100123456789)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  # ---------------------------------------------------------------------------
+  # Telegram service — token read from argocd-notifications-secret
+  # ---------------------------------------------------------------------------
+  service.telegram: |
+    token: $telegram-token
+
+  # ---------------------------------------------------------------------------
+  # Notification templates
+  # ---------------------------------------------------------------------------
+  template.app-sync-succeeded: |
+    telegram:
+      message: |
+        ✅ *{{ .app.metadata.name }}* synced successfully
+        Revision: `{{ .app.status.sync.revision | trunc 8 }}`
+        [Open in ArgoCD]({{ .context.argocdUrl }}/applications/{{ .app.metadata.name }})
+
+  template.app-sync-failed: |
+    telegram:
+      message: |
+        ❌ *{{ .app.metadata.name }}* sync FAILED
+        Phase: {{ .app.status.operationState.phase }}
+        Message: {{ .app.status.operationState.message }}
+        [Open in ArgoCD]({{ .context.argocdUrl }}/applications/{{ .app.metadata.name }})
+
+  template.app-health-degraded: |
+    telegram:
+      message: |
+        ⚠️ *{{ .app.metadata.name }}* health DEGRADED
+        Status: {{ .app.status.health.status }}
+        {{ if .app.status.health.message }}Message: {{ .app.status.health.message }}{{ end }}
+        [Open in ArgoCD]({{ .context.argocdUrl }}/applications/{{ .app.metadata.name }})
+
+  template.app-deployed: |
+    telegram:
+      message: |
+        🚀 *{{ .app.metadata.name }}* deployed
+        Image: `{{ (index .app.status.summary.images 0) | default "unknown" }}`
+        [Open in ArgoCD]({{ .context.argocdUrl }}/applications/{{ .app.metadata.name }})
+
+  # ---------------------------------------------------------------------------
+  # Triggers — when to send notifications
+  # ---------------------------------------------------------------------------
+  trigger.on-sync-succeeded: |
+    - when: app.status.operationState.phase in ['Succeeded']
+      send: [app-sync-succeeded]
+
+  trigger.on-sync-failed: |
+    - when: app.status.operationState.phase in ['Error', 'Failed']
+      send: [app-sync-failed]
+
+  trigger.on-health-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      send: [app-health-degraded]
+
+  trigger.on-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.status.sync.revision
+      send: [app-deployed]
+
+  # ---------------------------------------------------------------------------
+  # Default subscriptions — applies to ALL apps automatically
+  # Change chat ID to your Telegram chat/group ID
+  # ---------------------------------------------------------------------------
+  defaultTriggers: |
+    - on-sync-failed
+    - on-health-degraded
+
+  subscriptions: |
+    - recipients:
+        - telegram:<YOUR_TELEGRAM_CHAT_ID>
+      triggers:
+        - on-sync-failed
+        - on-health-degraded
+        - on-deployed

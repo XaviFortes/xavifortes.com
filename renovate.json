@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "timezone": "Europe/Madrid",
+  "schedule": ["every weekend"],
+
+  "minimumReleaseAge": "7 days",
+
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "minimumReleaseAge": "0 days",
+    "labels": ["security"]
+  },
+
+  "packageRules": [
+    {
+      "description": "npm dependencies — group all into one PR, 1 week minimum age",
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies",
+      "minimumReleaseAge": "7 days",
+      "automerge": false
+    },
+    {
+      "description": "Docker base images — 1 week minimum age",
+      "matchManagers": ["dockerfile"],
+      "groupName": "docker base images",
+      "minimumReleaseAge": "7 days",
+      "automerge": false
+    },
+    {
+      "description": "Terraform/OpenTofu providers — 1 week minimum age",
+      "matchManagers": ["terraform"],
+      "groupName": "terraform providers",
+      "minimumReleaseAge": "7 days",
+      "automerge": false
+    },
+    {
+      "description": "GitHub Actions — 1 week minimum age",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "minimumReleaseAge": "7 days",
+      "automerge": false
+    },
+    {
+      "description": "Major versions always require manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["major-update"]
+    }
+  ],
+
+  "labels": ["dependencies"],
+  "assignees": ["XaviFortes"],
+  "reviewers": ["XaviFortes"],
+
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+
+  "commitMessagePrefix": "chore(deps):"
+}

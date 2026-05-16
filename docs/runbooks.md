@@ -98,7 +98,7 @@ kubectl get certificate xavifortes-tls -n xavifortes -w
 
 If ACME HTTP-01 challenges are failing with 404, check that:
 1. HAProxy `http_front` has the `ACL_xavifortes` rule routing port 80 to MAD1
-2. Traefik is reachable on port 80: `curl -I http://141.227.188.178/`
+2. Traefik is reachable on port 80: `curl -I http://<MAD1_NODE_IP>/` (IPs in vars.sops.yml)
 3. Cloudflare is not blocking the ACME validator IP
 
 ---

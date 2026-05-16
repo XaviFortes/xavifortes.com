@@ -19,3 +19,15 @@ creation_rules:
       - age:
           - *primary
           - *ci
+
+  # Ansible vars — primary key only (no CI access needed)
+  - path_regex: ansible/.*\.sops\.ya?ml$
+    key_groups:
+      - age:
+          - *primary
+
+  # Kubernetes secrets (cert-manager CF token, etc) — primary key only
+  - path_regex: kubernetes/.*\.sops\.ya?ml$
+    key_groups:
+      - age:
+          - *primary

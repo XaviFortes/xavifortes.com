@@ -1,0 +1,22 @@
+---
+# ansible/playbooks/gra8-haproxy.yml
+#
+# Deploys the HAProxy configuration to the GRA8 VPS.
+# Backend IPs are read from SOPS-encrypted group_vars/gra8/vars.sops.yml.
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/gra8-haproxy.yml
+#
+# Requirements:
+#   pip install ansible-core
+#   ansible-galaxy collection install community.sops
+#   Age private key in ~/.config/sops/age/keys.txt (or SOPS_AGE_KEY env var)
+#
+# Dry-run (check mode):
+#   ansible-playbook -i inventory/hosts.yml playbooks/gra8-haproxy.yml --check --diff
+- name: Deploy HAProxy config to GRA8
+  hosts: gra8
+  gather_facts: false
+
+  roles:
+    - haproxy-gra8

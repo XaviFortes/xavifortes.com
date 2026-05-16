@@ -1,0 +1,6 @@
+# ansible/group_vars/gra8/vars.yml
+#
+# Non-sensitive variables for GRA8 hosts.
+# All IPs, domains, and credentials are in vars.sops.yml (SOPS-encrypted).
+
+haproxy_config_path: /etc/haproxy/haproxy.cfg

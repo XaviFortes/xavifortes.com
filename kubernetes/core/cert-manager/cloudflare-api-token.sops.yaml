@@ -1,0 +1,48 @@
+---
+# kubernetes/core/cert-manager/cloudflare-api-token.sops.yaml
+#
+# SOPS-encrypted Kubernetes Secret containing the Cloudflare API token
+# for DNS-01 ACME challenge solver.
+#
+# SETUP INSTRUCTIONS:
+# ===================
+# 1. Create a Cloudflare API token at dash.cloudflare.com:
+#    - My Profile → API Tokens → Create Token
+#    - Use template "Edit zone DNS" or custom:
+#        Zone > DNS > Edit  (scoped to xavifortes.com zone only — NOT all zones)
+#    - No other permissions needed
+#
+# 2. Create and encrypt this secret:
+#    CF_TOKEN="your-token-here"
+#    kubectl create secret generic cloudflare-api-token-dns01 \
+#      --from-literal=api-token="$CF_TOKEN" \
+#      -n cert-manager \
+#      --dry-run=client -o yaml \
+#    | sops --encrypt --input-type yaml --output-type yaml \
+#        --encrypted-regex '^(data|stringData)$' \
+#        /dev/stdin > kubernetes/core/cert-manager/cloudflare-api-token.sops.yaml
+#
+# 3. Apply to cluster (decrypt on the fly):
+#    sops -d kubernetes/core/cert-manager/cloudflare-api-token.sops.yaml \
+#      | kubectl apply -f -
+#
+# 4. Commit the encrypted file (safe to commit — only public key can decrypt):
+#    git add kubernetes/core/cert-manager/cloudflare-api-token.sops.yaml
+#    git commit -m "feat(cert-manager): add encrypted cloudflare dns01 token"
+#
+# NOTE: This file is a TEMPLATE — it does not contain real credentials.
+# Replace this file with the SOPS-encrypted version after running step 2 above.
+#
+# The plaintext form before encryption looks like:
+#
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: cloudflare-api-token-dns01
+#   namespace: cert-manager
+# stringData:
+#   api-token: "<CLOUDFLARE_API_TOKEN>"
+#
+# IMPORTANT: The secret must be in the cert-manager namespace (not xavifortes),
+# because ClusterIssuers are cluster-scoped and cert-manager reads secrets from
+# its own namespace.

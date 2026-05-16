@@ -1,0 +1,46 @@
+---
+# ansible/roles/haproxy-gra8/tasks/main.yml
+#
+# Manages HAProxy configuration on GRA8.
+# Decrypts SOPS vars automatically via community.sops.load_vars.
+
+- name: Load SOPS-encrypted variables
+  community.sops.load_vars:
+    file: "{{ playbook_dir }}/../group_vars/gra8/vars.sops.yml"
+    expressions: evaluate-on-load
+
+- name: Render HAProxy config from template
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /tmp/haproxy-candidate.cfg
+    mode: "0640"
+    owner: root
+    group: haproxy
+  become: true
+
+- name: Validate HAProxy config
+  ansible.builtin.command:
+    cmd: haproxy -c -f /tmp/haproxy-candidate.cfg
+  become: true
+  register: haproxy_validate
+  changed_when: false
+  failed_when: haproxy_validate.rc != 0
+
+- name: Deploy HAProxy config
+  ansible.builtin.copy:
+    src: /tmp/haproxy-candidate.cfg
+    dest: "{{ haproxy_config_path }}"
+    remote_src: true
+    owner: root
+    group: haproxy
+    mode: "0640"
+    backup: true
+  become: true
+  notify: reload haproxy
+
+- name: Ensure HAProxy is running
+  ansible.builtin.systemd:
+    name: haproxy
+    state: started
+    enabled: true
+  become: true

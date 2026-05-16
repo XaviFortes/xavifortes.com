@@ -52,13 +52,13 @@ User's browser
       ▼
 Cloudflare Edge  (WAF, rate limiting, CDN cache, DDoS protection)
       │  HTTPS — Full Strict mode (validates origin cert)
-      │  Cloudflare IP → 51.210.105.255 (GRA8)
+      │  Cloudflare IP → <GRA8_IP> (GRA8)
       ▼
-GRA8 HAProxy  (OVH Gravelines VPS, 51.210.105.255)
+GRA8 HAProxy  (OVH Gravelines VPS, IP in SOPS secrets)
       │  TCP passthrough — SNI-based routing, no SSL termination for xavifortes.com
       │  (HAProxy peeks at TLS SNI, routes xavifortes.com directly to MAD1)
       ▼
-MAD1 Traefik  (k3s LoadBalancer, any of 141.227.188.178-180 :443)
+MAD1 Traefik  (k3s LoadBalancer, IPs in ansible/group_vars/gra8/vars.sops.yml)
       │  TLS termination — Let's Encrypt cert via cert-manager
       │  IngressRoute: Host(`xavifortes.com`) || Host(`www.xavifortes.com`)
       │  www-redirect middleware → 308 to apex
@@ -139,7 +139,7 @@ State stored in Backblaze B2, key prefix `xavifortes/cloudflare/tofu.tfstate`.
 
 | Resource | Description |
 |---|---|
-| `cloudflare_record.apex` | A record `xavifortes.com` → `51.210.105.255` (GRA8), proxied |
+| `cloudflare_record.apex` | A record `xavifortes.com` → GRA8 IP (from SOPS secrets), proxied |
 | `cloudflare_record.www` | CNAME `www` → `xavifortes.com`, proxied |
 | `cloudflare_zone_settings_override` | SSL strict, TLS 1.2+, HTTP/3, brotli, early hints |
 | `cloudflare_ruleset.waf_custom` | Block empty UA, scanners (sqlmap/nikto/etc), path traversal |
@@ -179,14 +179,14 @@ sops infrastructure/tofu/live/cloudflare/secrets.sops.json
 
 ## Kubernetes Cluster (MAD1)
 
-k3s cluster on OVH Madrid. Three control-plane VPS nodes:
+k3s cluster on OVH Madrid. Three control-plane VPS nodes (IPs stored in `ansible/group_vars/gra8/vars.sops.yml`, SOPS-encrypted):
 
 | Node | IP |
 |---|---|
-| vps-6b58f204 | 141.227.188.178 |
-| vps-04483f6e | 141.227.188.179 |
-| vps-d147fb4d | 141.227.188.180 |
-| k3s-ha-ovh-es | 10.2.1.6 (internal only) |
+| vps-6b58f204 | `<see vars.sops.yml>` |
+| vps-04483f6e | `<see vars.sops.yml>` |
+| vps-d147fb4d | `<see vars.sops.yml>` |
+| k3s-ha-ovh-es | internal only |
 
 **Prerequisites on the cluster (one-time setup):**
 
@@ -224,7 +224,7 @@ kubectl apply -f kubernetes/apps/xavifortes-web/argocd-app.yaml
 
 ## GRA8 HAProxy
 
-The HAProxy on GRA8 (`51.210.105.255`) uses a two-tier `:443` setup:
+The HAProxy on GRA8 (IP in SOPS secrets) uses a two-tier `:443` setup:
 
 ```
 :443  https_sni_router  (TCP mode)
