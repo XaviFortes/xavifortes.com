@@ -28,7 +28,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/web
+  IMAGE_NAME: xavifortes/web
 
 jobs:
   # ---------------------------------------------------------------------------
