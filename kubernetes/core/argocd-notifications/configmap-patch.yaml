@@ -92,7 +92,7 @@ data:
 
   subscriptions: |
     - recipients:
-        - telegram:<YOUR_TELEGRAM_CHAT_ID>
+        - telegram:1318385898
       triggers:
         - on-sync-failed
         - on-health-degraded
