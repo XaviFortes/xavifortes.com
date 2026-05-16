@@ -8,9 +8,9 @@ resource "cloudflare_record" "apex" {
   name            = "@"
   type            = "A"
   content         = var.gra8_ipv4
-  proxied         = true  # Traffic through Cloudflare WAF
-  ttl             = 1     # Auto (proxied records ignore TTL)
-  allow_overwrite = true  # Take ownership of pre-existing apex A record
+  proxied         = true # Traffic through Cloudflare WAF
+  ttl             = 1    # Auto (proxied records ignore TTL)
+  allow_overwrite = true # Take ownership of pre-existing apex A record
 }
 
 # www CNAME → apex
@@ -118,7 +118,7 @@ resource "cloudflare_ruleset" "waf_custom" {
     action      = "managed_challenge"
     description = "Challenge high-risk countries"
     expression  = "ip.geoip.country in {\"CN\" \"RU\" \"KP\" \"IR\"}"
-    enabled     = false  # Enable when you're happy with the other rules first
+    enabled     = false # Enable when you're happy with the other rules first
   }
 }
 
@@ -153,9 +153,9 @@ resource "cloudflare_ruleset" "rate_limit" {
 
     ratelimit {
       characteristics     = ["cf.colo.id", "ip.src"]
-      period              = 10   # Free plan: only 10s windows allowed
+      period              = 10 # Free plan: only 10s windows allowed
       requests_per_period = 20
-      mitigation_timeout  = 10    # Free plan: only 10s allowed
+      mitigation_timeout  = 10 # Free plan: only 10s allowed
     }
   }
 }
