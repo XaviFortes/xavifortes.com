@@ -16,7 +16,6 @@
 #     notifications.argoproj.io/subscribe.on-sync-succeeded.telegram="" \
 #     -n argocd
 #
-# Replace <YOUR_TELEGRAM_CHAT_ID> with your actual chat ID (e.g. -100123456789)
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -24,7 +23,7 @@ metadata:
   namespace: argocd
 data:
   # ---------------------------------------------------------------------------
-  # Telegram service — token read from argocd-notifications-secret
+  # Telegram service — token and chat ID read from argocd-notifications-secret
   # ---------------------------------------------------------------------------
   service.telegram: |
     token: $telegram-token
@@ -84,7 +83,7 @@ data:
 
   # ---------------------------------------------------------------------------
   # Default subscriptions — applies to ALL apps automatically
-  # Change chat ID to your Telegram chat/group ID
+  # Chat ID is read from argocd-notifications-secret ($telegram-chat-id)
   # ---------------------------------------------------------------------------
   defaultTriggers: |
     - on-sync-failed
@@ -92,7 +91,7 @@ data:
 
   subscriptions: |
     - recipients:
-        - telegram:1318385898
+        - telegram:$telegram-chat-id
       triggers:
         - on-sync-failed
         - on-health-degraded
