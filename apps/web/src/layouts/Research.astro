@@ -5,12 +5,22 @@ import Footer from "../components/Footer.astro";
 import IocTable from "../components/IocTable.astro";
 import type { CollectionEntry } from "astro:content";
 
-interface Props {
-  entry: CollectionEntry<"research">;
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
 }
 
-const { entry } = Astro.props;
+interface Props {
+  entry: CollectionEntry<"research">;
+  headings?: Heading[];
+}
+
+const { entry, headings = [] } = Astro.props;
 const d = entry.data;
+
+// Only top-level sections; h3s make the list noisy on a long post.
+const toc = headings.filter((h) => h.depth === 2);
 
 const fmt = (date: Date) =>
   date.toLocaleDateString("en-GB", {
@@ -21,7 +31,14 @@ const fmt = (date: Date) =>
 const iso = (date: Date) => date.toISOString().slice(0, 10);
 ---
 
-<Base title={`${d.title} — Xavier Fortes`} description={d.description}>
+<Base
+  title={`${d.title} — Xavier Fortes`}
+  description={d.description}
+  ogImage="/og-research.png"
+  ogType="article"
+  publishedTime={d.pubDate.toISOString()}
+  modifiedTime={d.updatedDate?.toISOString()}
+>
   <Nav />
 
   <main class="pt-32 pb-24 px-6">
@@ -94,6 +111,29 @@ const iso = (date: Date) => date.toISOString().slice(0, 10);
         }
       </header>
 
+      {
+        toc.length > 2 && (
+          <nav class="card !p-5 mb-12" aria-label="Table of contents">
+            <p class="section-label mb-3">contents</p>
+            <ol class="space-y-1.5 list-none">
+              {toc.map((h, i) => (
+                <li class="text-sm">
+                  <a
+                    href={`#${h.slug}`}
+                    class="text-slate-400 hover:text-brand-bright transition-colors"
+                  >
+                    <span class="font-mono text-xs text-slate-600 mr-2">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+
       <div class="prose research-prose">
         <slot />
       </div>
@@ -124,6 +164,36 @@ const iso = (date: Date) => date.toISOString().slice(0, 10);
   </main>
 
   <Footer />
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: d.title,
+      description: d.description,
+      datePublished: d.pubDate.toISOString(),
+      ...(d.updatedDate ? { dateModified: d.updatedDate.toISOString() } : {}),
+      author: {
+        "@type": "Person",
+        name: "Xavier Fortes",
+        url: "https://xavifortes.com",
+      },
+      publisher: {
+        "@type": "Person",
+        name: "Xavier Fortes",
+        url: "https://xavifortes.com",
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": new URL(`research/${entry.slug}/`, Astro.site).toString(),
+      },
+      image: new URL("og-research.png", Astro.site).toString(),
+      keywords: d.tags.join(", "),
+      inLanguage: "en",
+    })}
+  />
 </Base>
 
 <style is:global>
@@ -142,9 +212,11 @@ const iso = (date: Date) => date.toISOString().slice(0, 10);
   }
   .research-prose h2 {
     @apply text-xl font-semibold text-white mt-14 mb-4 pb-2 border-b border-white/10 tracking-tight;
+    /* clear the fixed nav when jumped to from the contents list */
+    @apply scroll-mt-24;
   }
   .research-prose h3 {
-    @apply text-base font-semibold text-white mt-10 mb-3;
+    @apply text-base font-semibold text-white mt-10 mb-3 scroll-mt-24;
   }
   .research-prose p {
     @apply text-[15px] leading-7;
