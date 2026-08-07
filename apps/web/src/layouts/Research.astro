@@ -1,0 +1,196 @@
+---
+import Base from "./Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import IocTable from "../components/IocTable.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"research">;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+
+const fmt = (date: Date) =>
+  date.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+const iso = (date: Date) => date.toISOString().slice(0, 10);
+---
+
+<Base title={`${d.title} — Xavier Fortes`} description={d.description}>
+  <Nav />
+
+  <main class="pt-32 pb-24 px-6">
+    <article class="max-w-3xl mx-auto">
+      <header class="mb-12">
+        <a
+          href="/research"
+          class="nav-link inline-flex items-center gap-1.5 mb-6 hover:text-brand-bright"
+        >
+          <span class="text-brand">~/</span>research
+        </a>
+
+        <h1
+          class="text-3xl md:text-4xl font-semibold text-white leading-tight tracking-tight mb-4"
+        >
+          {d.title}
+        </h1>
+
+        <p class="text-lg text-slate-400 leading-relaxed mb-6">{d.description}</p>
+
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-mono text-slate-500">
+          <time datetime={iso(d.pubDate)}>{fmt(d.pubDate)}</time>
+          {
+            d.updatedDate && (
+              <>
+                <span class="text-slate-700">·</span>
+                <span>updated {iso(d.updatedDate)}</span>
+              </>
+            )
+          }
+          {
+            d.malwareFamily && (
+              <>
+                <span class="text-slate-700">·</span>
+                <span class="code-badge">{d.malwareFamily}</span>
+              </>
+            )
+          }
+          {
+            d.firstSeen && (
+              <>
+                <span class="text-slate-700">·</span>
+                <span>first seen {iso(d.firstSeen)}</span>
+              </>
+            )
+          }
+          {
+            d.draft && (
+              <>
+                <span class="text-slate-700">·</span>
+                <span class="text-accent-orange">draft</span>
+              </>
+            )
+          }
+        </div>
+
+        {
+          d.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-5">
+              {d.tags.map((t) => (
+                <a
+                  href={`/research/tags/${t}`}
+                  class="font-mono text-xs text-slate-400 border border-white/10 rounded-full px-3 py-1 hover:border-brand/50 hover:text-white transition-colors"
+                >
+                  {t}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </header>
+
+      <div class="prose research-prose">
+        <slot />
+      </div>
+
+      <IocTable iocs={d.iocs} samples={d.samples} />
+
+      {
+        d.references.length > 0 && (
+          <section class="mt-12">
+            <p class="section-label mb-4">references</p>
+            <ul class="space-y-2">
+              {d.references.map((r) => (
+                <li>
+                  <a
+                    href={r.url}
+                    rel="noopener"
+                    class="text-sm text-brand-bright hover:text-accent-green transition-colors"
+                  >
+                    {r.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </article>
+  </main>
+
+  <Footer />
+</Base>
+
+<style is:global>
+  /*
+   * Long-form technical reading.
+   *
+   * Prose stays at a comfortable measure, but <pre> breaks out wider — hex
+   * dumps, IL listings, YARA rules and 64-char hashes are unreadable when
+   * wrapped into a normal prose column, and that's most of what these posts are.
+   */
+  .research-prose {
+    @apply text-slate-300 leading-relaxed;
+  }
+  .research-prose > * + * {
+    @apply mt-5;
+  }
+  .research-prose h2 {
+    @apply text-xl font-semibold text-white mt-14 mb-4 pb-2 border-b border-white/10 tracking-tight;
+  }
+  .research-prose h3 {
+    @apply text-base font-semibold text-white mt-10 mb-3;
+  }
+  .research-prose p {
+    @apply text-[15px] leading-7;
+  }
+  .research-prose ul,
+  .research-prose ol {
+    @apply pl-5 space-y-2 text-[15px];
+  }
+  .research-prose ul {
+    @apply list-disc marker:text-brand/60;
+  }
+  .research-prose ol {
+    @apply list-decimal marker:text-brand/60 marker:font-mono;
+  }
+  .research-prose strong {
+    @apply text-white font-semibold;
+  }
+  .research-prose a {
+    @apply text-brand-bright hover:text-accent-green underline underline-offset-2 decoration-brand/30 transition-colors;
+  }
+  .research-prose blockquote {
+    @apply border-l-2 border-brand pl-4 text-slate-400 italic;
+  }
+  .research-prose :not(pre) > code {
+    @apply font-mono text-[0.85em] text-accent-green bg-surface-3 px-1.5 py-0.5 rounded border border-white/5;
+  }
+  .research-prose pre {
+    @apply bg-surface-2 border border-white/5 rounded-xl p-5 overflow-x-auto text-[13px] leading-relaxed;
+    /* break out of the prose measure */
+    width: min(56rem, calc(100vw - 3rem));
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+  .research-prose pre code {
+    @apply bg-transparent border-0 p-0 text-slate-300;
+  }
+  .research-prose table {
+    @apply w-full text-sm border-collapse my-6;
+  }
+  .research-prose :is(th, td) {
+    @apply text-left py-2 pr-4 border-b border-white/5 align-top;
+  }
+  .research-prose th {
+    @apply font-mono text-xs uppercase tracking-widest text-slate-500;
+  }
+  .research-prose hr {
+    @apply border-white/10 my-12;
+  }
+</style>

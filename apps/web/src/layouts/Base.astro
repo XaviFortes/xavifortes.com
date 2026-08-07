@@ -43,6 +43,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <!-- Feed autodiscovery -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Xavier Fortes — Research"
+      href={new URL("research/rss.xml", Astro.site)}
+    />
+
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content";
+import Research from "../../layouts/Research.astro";
+
+export async function getStaticPaths() {
+  // Drafts render in `astro dev` for preview, but never ship in a build.
+  const posts = await getCollection(
+    "research",
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+
+  return posts.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Research entry={entry}>
+  <Content />
+</Research>

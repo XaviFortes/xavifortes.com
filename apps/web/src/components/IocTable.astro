@@ -1,0 +1,102 @@
+---
+import { defang, iocTypeLabel } from "../lib/defang";
+
+interface Ioc {
+  value: string;
+  type: string;
+  note?: string;
+}
+interface Sample {
+  name: string;
+  sha256: string;
+  size?: number;
+  note?: string;
+  url?: string;
+}
+
+interface Props {
+  iocs?: Ioc[];
+  samples?: Sample[];
+}
+
+const { iocs = [], samples = [] } = Astro.props;
+const hasAny = iocs.length > 0 || samples.length > 0;
+
+const grouped = iocs.reduce<Record<string, Ioc[]>>((acc, i) => {
+  (acc[i.type] ??= []).push(i);
+  return acc;
+}, {});
+---
+
+{
+  hasAny && (
+    <section id="indicators" class="card mt-16 scroll-mt-24">
+      <p class="section-label mb-2">indicators of compromise</p>
+      <p class="text-sm text-slate-400 mb-6">
+        Defanged for safety — swap <code class="code-badge">[.]</code> back to
+        <code class="code-badge">.</code> and <code class="code-badge">hxxp</code> to
+        <code class="code-badge">http</code> before use. Machine-readable copy:
+        <a href="/research/iocs.json" class="text-brand-bright hover:text-accent-green transition-colors">
+          iocs.json
+        </a>
+        .
+      </p>
+
+      {samples.length > 0 && (
+        <div class="mb-8">
+          <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-3">
+            samples
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <tbody>
+                {samples.map((s) => (
+                  <tr class="border-b border-white/5 align-top">
+                    <td class="py-2.5 pr-4 whitespace-nowrap">
+                      <span class="font-mono text-slate-200">{s.name}</span>
+                      {s.size && (
+                        <span class="text-slate-600 text-xs ml-2">
+                          {s.size.toLocaleString()} B
+                        </span>
+                      )}
+                    </td>
+                    <td class="py-2.5 pr-4">
+                      <code class="font-mono text-xs text-accent-green break-all">
+                        {s.sha256}
+                      </code>
+                    </td>
+                    <td class="py-2.5 text-slate-400 text-xs">{s.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {Object.entries(grouped).map(([type, items]) => (
+        <div class="mb-8 last:mb-0">
+          <p class="font-mono text-xs text-slate-500 uppercase tracking-widest mb-3">
+            {iocTypeLabel(type)}
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <tbody>
+                {items.map((i) => (
+                  <tr class="border-b border-white/5 align-top">
+                    <td class="py-2.5 pr-4">
+                      <code class="font-mono text-xs text-accent-orange break-all">
+                        {defang(i.value, i.type)}
+                      </code>
+                    </td>
+                    <td class="py-2.5 text-slate-400 text-xs">{i.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </section>
+  )
+}

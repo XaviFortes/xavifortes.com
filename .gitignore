@@ -34,6 +34,13 @@ override.tf.json
 **/secrets.json
 **/common.json
 
+# Plaintext / intermediate secret manifests — never commit
+# (SOPS-encrypted *.sops.yaml files ARE safe and tracked)
+**/*-plain.yaml
+**/*-plain.yml
+**/*-tmp.yaml
+**/*-tmp.yml
+
 # macOS
 .DS_Store
 .AppleDouble

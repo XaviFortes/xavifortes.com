@@ -1,0 +1,81 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Nav from "../../../components/Nav.astro";
+import Footer from "../../../components/Footer.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    "research",
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((p) => p.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: CollectionEntry<"research">[];
+}
+
+const { tag, posts } = Astro.props;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" });
+---
+
+<Base
+  title={`Research tagged ${tag} — Xavier Fortes`}
+  description={`Malware analysis and reverse engineering posts tagged ${tag}.`}
+>
+  <Nav />
+
+  <main class="pt-32 pb-24 px-6">
+    <div class="max-w-4xl mx-auto">
+      <a href="/research" class="nav-link inline-block mb-6">
+        <span class="text-brand">~/</span>research
+      </a>
+
+      <h1 class="text-3xl font-semibold text-white tracking-tight mb-10">
+        tagged <span class="font-mono text-brand-bright">{tag}</span>
+      </h1>
+
+      <div class="space-y-3">
+        {
+          posts.map((p) => (
+            <a href={`/research/${p.slug}`} class="card block group !p-6">
+              <div class="flex flex-col md:flex-row md:items-baseline md:gap-6">
+                <time
+                  datetime={p.data.pubDate.toISOString().slice(0, 10)}
+                  class="font-mono text-xs text-slate-500 shrink-0 md:w-28 mb-2 md:mb-0"
+                >
+                  {fmt(p.data.pubDate)}
+                </time>
+                <div class="min-w-0">
+                  <h2 class="text-white font-medium group-hover:text-brand-bright transition-colors">
+                    {p.data.title}
+                  </h2>
+                  <p class="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                    {p.data.description}
+                  </p>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Base>
