@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload Checkov SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && hashFiles('checkov.sarif') != ''
         with:
           sarif_file: checkov.sarif
 
@@ -162,6 +162,14 @@ jobs:
 
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
+        # Trivy is advisory here (see exit-code below). A scanner outage —
+        # usually a ghcr.io rate limit on the vuln DB — must not block a deploy.
+        continue-on-error: true
+        env:
+          # Fall back to the AWS mirror first; ghcr.io anonymous pulls get
+          # rate-limited (TOOMANYREQUESTS) and the scan then writes no output.
+          TRIVY_DB_REPOSITORY: "public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2"
+          TRIVY_JAVA_DB_REPOSITORY: "public.ecr.aws/aquasecurity/trivy-java-db:1,ghcr.io/aquasecurity/trivy-java-db:1"
         with:
           image-ref: xavifortes-web:scan
           format: "sarif"
@@ -171,7 +179,9 @@ jobs:
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        # Only upload if the scan actually produced a report. Without this
+        # guard a failed scan fails the job on "Path does not exist".
+        if: always() && hashFiles('trivy.sarif') != ''
         with:
           sarif_file: trivy.sarif
 
