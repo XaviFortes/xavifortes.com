@@ -15,22 +15,37 @@ samples:
     sha256: "b0209a56237964228cbd95cfe7ee4c639e20da8bfb01bc19e84e43cb3d832c01"
     size: 20590711
     note: "XOR-encrypted ZIP container shipped in the game folder"
+    url: "https://bazaar.abuse.ch/sample/b0209a56237964228cbd95cfe7ee4c639e20da8bfb01bc19e84e43cb3d832c01/"
   - name: "libwin64.rpa"
     sha256: "c4a461b72c5bfa08d4bffa4d10d265d3777efeb4066566442b11220cd48b88c6"
     size: 143789
     note: "Ren'Py archive carrying the trojanised script.rpyc"
+    url: "https://bazaar.abuse.ch/sample/c4a461b72c5bfa08d4bffa4d10d265d3777efeb4066566442b11220cd48b88c6/"
+  - name: "tIM9CNSIu.cmd"
+    sha256: "36664f0225595e160bc93b3e3891cb84bcaa21fe1653e6485dea0a0bc3bed97e"
+    size: 1181
+    note: "MSBuild launcher; content randomised per victim, so this hash is one instance"
+    url: "https://bazaar.abuse.ch/sample/36664f0225595e160bc93b3e3891cb84bcaa21fe1653e6485dea0a0bc3bed97e/"
   - name: "DocumentFormatOpenXml.csproj"
     sha256: "f31df9170d3d70c2e3a84e56f1dabe093f19c79013a4d741cda3697ab2a93eed"
     size: 9256933
     note: "Carrier project; holds the stage-4 assembly and is its own decryption key"
+    url: "https://bazaar.abuse.ch/sample/f31df9170d3d70c2e3a84e56f1dabe093f19c79013a4d741cda3697ab2a93eed/"
+  - name: "DocumentFormatOpenXml.Compile.targets"
+    sha256: "ca31be1448cc15dfb3359f1ab1ba32cf6124fde5216457ca9fd03918892ec43b"
+    size: 5980188
+    note: "Holds the reflective-load property function and one hex fragment of stage 3"
+    url: "https://bazaar.abuse.ch/sample/ca31be1448cc15dfb3359f1ab1ba32cf6124fde5216457ca9fd03918892ec43b/"
   - name: "loader_stage3.dll"
     sha256: "5fa116e699f23e230c6c17a47d499feae725069ec5186196df24a7346e0f77f5"
     size: 5662208
     note: "Reconstructed from MSBuild properties. Never exists on disk."
+    url: "https://bazaar.abuse.ch/sample/5fa116e699f23e230c6c17a47d499feae725069ec5186196df24a7346e0f77f5/"
   - name: "WrickSpilth.dll"
     sha256: "a7e8bb5263b34be020d8b5c938b4c4187f390b9240f9ce757cae953da9988227"
     size: 3054080
     note: "Stage 4, recovered from the carrier project. Never exists on disk."
+    url: "https://bazaar.abuse.ch/sample/a7e8bb5263b34be020d8b5c938b4c4187f390b9240f9ce757cae953da9988227/"
 
 iocs:
   - { value: "prunarok.lol", type: "domain", note: "downloader C2" }
