@@ -1,0 +1,423 @@
+---
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+
+const title =
+  "Hacked account recovery: what to do if malware stole your passwords, sessions or crypto";
+const description =
+  "Info-stealer malware took your passwords, logged-in sessions and wallet files. A plain-English guide to what was taken, what to do in the first hour, and how to recover accounts when the attacker changed your password and recovery options.";
+
+// Question-shaped so they match what people actually type into a search box.
+const faq = [
+  {
+    q: "How do I know if malware stole my accounts?",
+    a: "Common signs: you get locked out of an account you know the password to, friends receive messages you didn't send, your email has new forwarding rules, security settings changed without you, or money moved from a crypto wallet. If you installed a cracked game, a 'free' program or a file someone sent you shortly before, that is the likely source.",
+  },
+  {
+    q: "I changed my password but I'm still getting hacked. Why?",
+    a: "Because the attacker probably isn't using your password. Info-stealers copy your logged-in browser sessions, which already passed your password and two-factor check. Changing the password does not end those sessions. You have to sign out of all devices, which every major service offers, and you have to do it from a clean device after the infected computer is off the network.",
+  },
+  {
+    q: "The hacker changed my password and my recovery email. Can I still get my account back?",
+    a: "Often yes, but it takes a formal account recovery request rather than the normal reset flow. Every major provider has one. It works best from a device, browser and network you have used with that account before, and you should answer with old information you genuinely remember rather than guesses. Expect it to take days and to need more than one attempt.",
+  },
+  {
+    q: "Can I get stolen cryptocurrency back?",
+    a: "Almost never. Blockchain transactions are final and there is no support desk that can reverse them. If funds were on an exchange rather than your own wallet, contact that exchange immediately because they can sometimes freeze an account. Anyone who promises to recover your crypto for a fee is running a second scam on you.",
+  },
+  {
+    q: "Is it enough to run an antivirus scan?",
+    a: "No. By the time you notice, the data has already been copied and sent. Removing the malware stops further theft but does not un-steal anything, and stealers are often bundled with other tools that survive a clean-up. The safest option is to reinstall the operating system, and to change your passwords from a different device rather than the infected one.",
+  },
+  {
+    q: "Should I pay someone to recover my account?",
+    a: "No. Searching for account recovery help surfaces a lot of paid 'recovery services' and outright 'hacker for hire' sites. They target people who are panicking. Every legitimate recovery route is free and runs through the service's own website.",
+  },
+];
+---
+
+<Base title={title} description={description} ogImage="/og-research.png">
+  <Nav />
+
+  <main class="pt-32 pb-24 px-6">
+    <div class="max-w-3xl mx-auto">
+      <!-- ── Emergency banner ─────────────────────────────────────── -->
+      <div class="border border-accent-red/40 bg-accent-red/5 rounded-xl p-5 mb-10">
+        <p class="font-mono text-xs uppercase tracking-widest text-accent-red mb-2">
+          if this is happening right now
+        </p>
+        <p class="text-slate-200 text-sm leading-relaxed">
+          Disconnect the infected computer from the internet, then do everything
+          below <strong class="text-white">from a different device</strong> — a phone
+          on mobile data is fine. Anything you type on the infected machine can be
+          stolen again.
+        </p>
+      </div>
+
+      <header class="mb-12">
+        <p class="section-label mb-3">~/help</p>
+        <h1
+          class="text-3xl md:text-4xl font-semibold text-white tracking-tight leading-tight mb-5"
+        >
+          Malware stole your passwords and logins. Here's how to get everything back.
+        </h1>
+        <p class="text-lg text-slate-400 leading-relaxed">
+          Written for people who are not security experts. If you downloaded a game,
+          a crack, a mod or a file from someone and then started losing accounts,
+          this is almost certainly what happened — and the order you do things in
+          matters more than anything else.
+        </p>
+      </header>
+
+      <!-- ── The first hour ───────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          Do these five things first, in this order
+        </h2>
+        <p class="text-sm text-slate-400 mb-6">
+          The order is not optional. Changing passwords while the infected machine is
+          still running online just hands the attacker the new ones.
+        </p>
+
+        <ol class="space-y-4">
+          {
+            [
+              [
+                "Get the infected computer off the internet",
+                "Unplug the network cable or turn off Wi-Fi. Don't shut it down if you might want evidence later — just disconnect it.",
+              ],
+              [
+                "Switch to a clean device",
+                "Another computer, or your phone on mobile data. Everything from here happens there, not on the infected machine.",
+              ],
+              [
+                "Change the password on your main email account first",
+                "Email is the master key — whoever controls it can reset everything else. Do this one before any other account.",
+              ],
+              [
+                "Sign out of all devices, everywhere",
+                "This is the step people skip and it's the one that actually evicts the attacker. Look for “sign out everywhere”, “log out of all sessions” or “manage devices” in each account's security settings.",
+              ],
+              [
+                "Check what they added to your accounts",
+                "New recovery emails or phone numbers, new two-factor apps, new email forwarding rules, new authorised apps. Attackers add these so they can walk back in after you change the password. Remove anything you don't recognise.",
+              ],
+            ].map(([h, b], i) => (
+              <li class="card !p-5 flex gap-4">
+                <span class="font-mono text-brand-bright text-sm shrink-0 pt-0.5">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <p class="text-white font-medium mb-1">{h}</p>
+                  <p class="text-sm text-slate-400 leading-relaxed">{b}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <!-- ── What was taken ───────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          What did the malware actually take?
+        </h2>
+        <p class="text-sm text-slate-400 mb-6">
+          Modern info-stealers are not subtle. They run once, copy everything of value
+          in a few seconds, send it to the attacker and often delete themselves. Assume
+          all of the following left your machine.
+        </p>
+
+        <div class="space-y-3">
+          {
+            [
+              [
+                "Saved passwords",
+                "Everything saved in Chrome, Edge, Firefox or Brave. Browsers encrypt these, but the malware runs as you, so it can decrypt them exactly like the browser does.",
+              ],
+              [
+                "Your logged-in sessions",
+                "The files that keep you signed in. These are the dangerous ones: they let an attacker enter your account without your password and without triggering two-factor, because that check already happened when you logged in.",
+              ],
+              [
+                "Autofill and card details",
+                "Names, addresses, phone numbers and anything else the browser fills in for you.",
+              ],
+              [
+                "Crypto wallets",
+                "Wallet files on disk and browser wallet extensions. Also any file with a name like seed, backup, wallet or recovery.",
+              ],
+              [
+                "Messaging apps",
+                "Desktop Signal, WhatsApp and similar. Enough to read your conversations and in some cases to impersonate you.",
+              ],
+              [
+                "Email programs, FTP and SSH keys",
+                "Saved credentials from Outlook, Thunderbird, FileZilla, WinSCP and developer tools.",
+              ],
+              [
+                "Files it was told to look for",
+                "Operators configure it to grab documents, images and text files by name or extension. Screenshots of your desktop are common too.",
+              ],
+            ].map(([h, b]) => (
+              <div class="card !p-5">
+                <p class="text-white font-medium mb-1">{h}</p>
+                <p class="text-sm text-slate-400 leading-relaxed">{b}</p>
+              </div>
+            ))
+          }
+        </div>
+
+        <p class="text-sm text-slate-400 leading-relaxed mt-6">
+          This is why an antivirus scan is not enough. The theft already happened.
+          Cleaning the machine stops it happening again; it does not undo anything.
+        </p>
+      </section>
+
+      <!-- ── Locked out ───────────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          They changed my password and recovery options — am I locked out for good?
+        </h2>
+        <p class="text-sm text-slate-400 mb-6">
+          Usually not, but the normal “forgot password” link won't work any more. You
+          need the provider's account recovery process, which verifies you as a human
+          using what you remember about the account.
+        </p>
+
+        <div class="card !p-5 mb-6">
+          <p class="text-white font-medium mb-2">What makes recovery succeed</p>
+          <ul class="text-sm text-slate-400 space-y-1.5 list-disc pl-5 marker:text-brand/60">
+            <li>
+              Use a device, browser and internet connection you have used with that
+              account before. Providers weigh this heavily.
+            </li>
+            <li>
+              Answer with things you actually remember — old passwords, the month you
+              created the account, names of folders or contacts. A confident partial
+              answer beats a wrong precise one.
+            </li>
+            <li>
+              If you have ever bought anything through the account, have the order
+              details ready. Purchase history is strong proof.
+            </li>
+            <li>
+              Expect to try more than once, and expect it to take days. Repeated
+              submissions with better detail are normal, not a sign it failed.
+            </li>
+          </ul>
+        </div>
+
+        <div class="card !p-5 mb-6">
+          <p class="text-white font-medium mb-2">Where to start, by service</p>
+          <p class="text-xs text-slate-500 mb-4">
+            Type these addresses into your browser yourself rather than clicking a
+            search result — including from this page. Fake recovery pages are common
+            and they specifically target people in your situation.
+          </p>
+          <ul class="text-sm space-y-2">
+            {
+              [
+                ["Microsoft / Outlook / Xbox", "account.live.com/acsr"],
+                ["Google / Gmail / YouTube", "accounts.google.com/signin/recovery"],
+                ["Instagram", "instagram.com/hacked"],
+                ["Facebook", "facebook.com/hacked"],
+                ["Discord", "support.discord.com"],
+                ["Steam", "help.steampowered.com"],
+                ["Apple", "iforgot.apple.com"],
+              ].map(([svc, url]) => (
+                <li class="flex flex-wrap gap-x-3 border-b border-white/5 pb-2">
+                  <span class="text-slate-300 min-w-[13rem]">{svc}</span>
+                  <code class="font-mono text-xs text-accent-green">{url}</code>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <p class="text-sm text-slate-400 leading-relaxed">
+          If an account is tied to a phone number you still control, or to a bank card
+          you still hold, say so in the recovery form. Those are among the strongest
+          proofs of ownership available to you.
+        </p>
+      </section>
+
+      <!-- ── Sessions on social ───────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          They're posting from my Instagram but my password still works
+        </h2>
+        <p class="text-sm text-slate-400 leading-relaxed mb-4">
+          That's stolen-session theft rather than password theft. The attacker is
+          riding a copy of your logged-in state, so your password never stopped
+          working and no login alert ever fired.
+        </p>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          The fix is the same on every platform: change the password, then explicitly{" "}
+          <strong class="text-white">end all active sessions</strong> — Instagram calls
+          it “Log out of all sessions”, Google calls it “Sign out of all devices”,
+          Discord has “Log out of all known devices”. Until you do that, the copied
+          session keeps working no matter how many times you change the password. Then
+          turn two-factor on, or off and on again, which invalidates old tokens on most
+          platforms.
+        </p>
+      </section>
+
+      <!-- ── Crypto ───────────────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          What about stolen cryptocurrency?
+        </h2>
+        <div class="border border-accent-orange/40 bg-accent-orange/5 rounded-xl p-5 mb-5">
+          <p class="text-slate-200 text-sm leading-relaxed">
+            Be prepared for the honest answer: if crypto left a wallet you control,
+            it is almost certainly gone. Transactions are final and nobody can reverse
+            them. Anyone who tells you otherwise for a fee is scamming you a second
+            time.
+          </p>
+        </div>
+        <p class="text-sm text-slate-400 mb-3">What is still worth doing:</p>
+        <ul class="text-sm text-slate-400 space-y-2 list-disc pl-5 marker:text-brand/60">
+          <li>
+            Move anything remaining to a <strong class="text-white">brand new wallet</strong>,
+            created on a clean device. Never reuse the old seed phrase — the attacker
+            has it.
+          </li>
+          <li>
+            Revoke token approvals from the old wallet, using the revoke feature in
+            your wallet software itself rather than a site you found in search results.
+          </li>
+          <li>
+            If funds sat on an exchange rather than your own wallet, contact that
+            exchange immediately. They can sometimes freeze accounts and stolen funds
+            are occasionally recovered when they pass through one.
+          </li>
+          <li>
+            File a police report, and in the US also an IC3 report. It rarely gets
+            funds back but it creates the record you'll need for insurance, taxes or
+            any future case.
+          </li>
+          <li>
+            Never enter your seed phrase into anything, ever, including a "recovery
+            tool". That is the single most common follow-up scam.
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── Scams ────────────────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          Watch out for the second wave of scams
+        </h2>
+        <p class="text-sm text-slate-400 leading-relaxed mb-4">
+          Searching for help after being hacked is itself dangerous. Those searches
+          are saturated with paid "account recovery services", "ethical hacker for
+          hire" sites and fake support accounts that reply within minutes on social
+          media. They exist because people in your position will pay anything.
+        </p>
+        <ul class="text-sm text-slate-400 space-y-2 list-disc pl-5 marker:text-brand/60">
+          <li>No legitimate recovery ever costs money. All of it is free and on the provider's own site.</li>
+          <li>Real support will never DM you first, and never asks for your password, seed phrase or a 2FA code.</li>
+          <li>Anyone guaranteeing results is lying — no one can guarantee a provider's decision.</li>
+          <li>If someone contacts you about your hack unprompted, they are involved or they are a scammer.</li>
+        </ul>
+      </section>
+
+      <!-- ── Cleaning up ──────────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          How do I clean the computer?
+        </h2>
+        <p class="text-sm text-slate-400 leading-relaxed mb-4">
+          Reinstall Windows from scratch. It sounds drastic, but these infections
+          routinely arrive bundled with other tools designed to survive removal, and
+          you cannot verify a clean-up worked. A reinstall you can trust.
+        </p>
+        <ul class="text-sm text-slate-400 space-y-2 list-disc pl-5 marker:text-brand/60">
+          <li>Back up your personal files first, but not programs or installers.</li>
+          <li>Reinstall from Microsoft's official media, not a recovery partition that may itself be tampered with.</li>
+          <li>Only sign back into accounts after you've reset their passwords and ended their sessions.</li>
+          <li>Don't restore a system image from after the infection — it brings the malware back.</li>
+        </ul>
+      </section>
+
+      <!-- ── Next time ────────────────────────────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-2 tracking-tight">
+          How do I stop this happening again?
+        </h2>
+        <ul class="text-sm text-slate-400 space-y-2 list-disc pl-5 marker:text-brand/60">
+          <li>
+            Stop saving passwords in the browser. Use a dedicated password manager
+            with its own master password — stealers grab browser stores by default.
+          </li>
+          <li>
+            Switch to passkeys where offered. They can't be copied off your machine
+            the way a password or session file can.
+          </li>
+          <li>
+            Cracked games, "free" paid software, cheat tools and mods from strangers
+            are the single most common delivery route. That's what happened here.
+          </li>
+          <li>
+            Keep crypto of any real value on a hardware wallet. It cannot be stolen
+            by software alone.
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── FAQ (mirrors the JSON-LD below) ──────────────────────── -->
+      <section class="mb-14">
+        <h2 class="text-xl font-semibold text-white mb-6 tracking-tight">
+          Common questions
+        </h2>
+        <div class="space-y-3">
+          {
+            faq.map((f) => (
+              <details class="card !p-5 group">
+                <summary class="text-white font-medium cursor-pointer list-none flex justify-between gap-4">
+                  {f.q}
+                  <span class="text-brand-bright shrink-0 group-open:rotate-45 transition-transform">
+                    +
+                  </span>
+                </summary>
+                <p class="text-sm text-slate-400 leading-relaxed mt-3">{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- ── Cross-link to the technical writeup ──────────────────── -->
+      <section class="card !p-6">
+        <p class="section-label mb-3">for the technically inclined</p>
+        <p class="text-slate-300 text-sm leading-relaxed mb-4">
+          This guide came out of taking one of these infections apart. If you want the
+          full analysis — the fake game, the four-stage loader, how the payload was
+          hidden inside its own build file, and the indicators for hunting it — that's
+          written up separately.
+        </p>
+        <a href="/research/amatera-renpy-msbuild-loader/" class="btn-ghost inline-block text-sm">
+          read the technical analysis →
+        </a>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    })}
+  />
+</Base>

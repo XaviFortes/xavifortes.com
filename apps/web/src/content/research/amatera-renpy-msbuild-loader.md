@@ -91,6 +91,12 @@ references:
     url: "https://www.proofpoint.com/us/blog/threat-insight/amatera-stealer-rebranded-acr-stealer-improved-evasion-sophistication"
 ---
 
+> **Has this happened to you?** This page is a technical teardown written for
+> analysts. If you're here because your own accounts were stolen and you need to
+> know what to do right now, read
+> [the recovery guide](/help/hacked-account-recovery/) instead — it's written in
+> plain English and ordered by what matters first.
+
 A friend installed what he thought was an unreleased AAA game. It never drew a frame.
 What it did instead was run a four-stage loader chain ending in Amatera Stealer, and
 take his Microsoft account on the way through.
@@ -312,6 +318,30 @@ Notably **absent**: any browser, wallet or credential paths. Stage 4 fingerprint
 establishes the channel, and pulls modules in on demand. The actual theft is done by
 Amatera, which arrives over the network and is not present in the files at all.
 
+## What Amatera takes once it lands
+
+Stage 4 pulls it over the network, so it isn't in this sample set and none of the
+below is my analysis — it's from Proofpoint's write-up of the family. Worth stating
+plainly, because "an info-stealer" undersells the blast radius and people
+consistently under-scope their clean-up as a result:
+
+- **Saved browser passwords**, web-form data and profile history, from every
+  Chromium-based browser and Firefox
+- **Session cookies** — the ones that make MFA irrelevant, as below
+- **Password manager browser extensions** — the extension's own files on disk
+- **Cryptocurrency** — software wallet files and wallet browser extensions
+- **Messaging apps** — Signal, WhatsApp and XMPP desktop clients
+- **Email clients**, and connection managers holding **SSH and FTP credentials**
+- **Arbitrary files**, selected by operator-configured extensions and keywords
+
+The App-Bound Encryption bypass is the mechanism behind most of that: it injects
+shellcode into the browser and has the browser decrypt and copy out its own
+protected files. Cookies and saved passwords come out through the same door.
+Exfiltration is a POST to the hardcoded C2, base64 and XOR encoded.
+
+The practical consequence: everything typed into or saved by that browser should be
+considered attacker-owned, not just whatever you happened to be logged into.
+
 ## How the Microsoft account went
 
 Amatera bypasses Chrome/Edge App-Bound Encryption by injecting shellcode into the browser
@@ -322,7 +352,8 @@ So the account went via **session cookie theft, not password theft**. The attack
 the `login.live.com` cookies and landed in an already-authenticated session. MFA never
 fired, because MFA protects the login, not the session that follows it.
 
-The practical consequence, if you're helping someone clean up: changing the password does
+Full remediation steps are in [the recovery guide](/help/hacked-account-recovery/). The
+short version, if you're helping someone clean up: changing the password does
 not evict them. You have to revoke sessions — "sign out everywhere" — and you have to do it
 from a clean device with the infected machine already off the network, or the new session
 gets stolen too. And check the account's recovery methods afterwards; attackers add their
