@@ -1,14 +1,14 @@
 # ============================================================================
 # Multi-stage Dockerfile for xavifortes.com (Astro)
 #
-# Stage 1 (builder): Node 20 Alpine — installs deps and runs `astro build`
+# Stage 1 (builder): Node 24 Alpine — installs deps and runs `astro build`
 # Stage 2 (runtime): nginx Alpine — serves the static dist/ with hardened config
 #
 # Final image is typically ~25MB and has zero Node.js surface area at runtime.
 # ============================================================================
 
 # ---- Stage 1: Build --------------------------------------------------------
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
