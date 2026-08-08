@@ -53,7 +53,7 @@ const fmt = (d: Date) =>
       <div class="space-y-3">
         {
           posts.map((p) => (
-            <a href={`/research/${p.slug}`} class="card block group !p-6">
+            <a href={`/research/${p.id}`} class="card block group !p-6">
               <div class="flex flex-col md:flex-row md:items-baseline md:gap-6">
                 <time
                   datetime={p.data.pubDate.toISOString().slice(0, 10)}

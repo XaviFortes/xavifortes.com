@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Research from "../../layouts/Research.astro";
 
 export async function getStaticPaths() {
@@ -10,13 +10,13 @@ export async function getStaticPaths() {
   );
 
   return posts.map((entry) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
-const { Content, headings } = await entry.render();
+const { Content, headings } = await render(entry);
 ---
 
 <Research entry={entry} headings={headings}>

@@ -9,21 +9,21 @@ import { escapeXml } from "../../lib/defang";
  * Excerpt-only feeds get ignored by the aggregators that actually distribute
  * this kind of writing (malware.news among them), so the whole post body goes
  * in. Astro compiles the markdown at build time via import.meta.glob, and
- * compiledContent() hands back the rendered HTML as a string.
+ * compiledContent() hands back the rendered HTML (as of Astro 5, a Promise).
  */
 
-const rendered = import.meta.glob<{ compiledContent: () => string }>(
+const rendered = import.meta.glob<{ compiledContent: () => Promise<string> }>(
   "../../content/research/*.md",
   { eager: true },
 );
 
-/** Map a collection entry id ("post.md") to its compiled HTML, if available. */
-function htmlFor(id: string): string | null {
+/** Map a collection entry id ("post", no extension) to its compiled HTML, if available. */
+async function htmlFor(id: string): Promise<string | null> {
   const match = Object.entries(rendered).find(([path]) =>
-    path.endsWith(`/${id}`),
+    path.endsWith(`/${id}.md`),
   );
   try {
-    return match?.[1]?.compiledContent?.() ?? null;
+    return (await match?.[1]?.compiledContent?.()) ?? null;
   } catch {
     return null;
   }
@@ -36,31 +36,33 @@ export const GET: APIRoute = async ({ site }) => {
     await getCollection("research", ({ data }) => !data.draft)
   ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-  const items = posts
-    .map((post) => {
-      const url = new URL(`research/${post.slug}/`, base).toString();
-      const html = htmlFor(post.id);
-      const categories = post.data.tags
-        .map((t) => `      <category>${escapeXml(t)}</category>`)
-        .join("\n");
+  const items = (
+    await Promise.all(
+      posts.map(async (post) => {
+        const url = new URL(`research/${post.id}/`, base).toString();
+        const html = await htmlFor(post.id);
+        const categories = post.data.tags
+          .map((t) => `      <category>${escapeXml(t)}</category>`)
+          .join("\n");
 
-      return [
-        "    <item>",
-        `      <title>${escapeXml(post.data.title)}</title>`,
-        `      <link>${escapeXml(url)}</link>`,
-        `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
-        `      <pubDate>${post.data.pubDate.toUTCString()}</pubDate>`,
-        `      <description>${escapeXml(post.data.description)}</description>`,
-        categories,
-        html
-          ? `      <content:encoded><![CDATA[${html.replace(/\]\]>/g, "]]&gt;")}]]></content:encoded>`
-          : "",
-        "    </item>",
-      ]
-        .filter(Boolean)
-        .join("\n");
-    })
-    .join("\n");
+        return [
+          "    <item>",
+          `      <title>${escapeXml(post.data.title)}</title>`,
+          `      <link>${escapeXml(url)}</link>`,
+          `      <guid isPermaLink="true">${escapeXml(url)}</guid>`,
+          `      <pubDate>${post.data.pubDate.toUTCString()}</pubDate>`,
+          `      <description>${escapeXml(post.data.description)}</description>`,
+          categories,
+          html
+            ? `      <content:encoded><![CDATA[${html.replace(/\]\]>/g, "]]&gt;")}]]></content:encoded>`
+            : "",
+          "    </item>",
+        ]
+          .filter(Boolean)
+          .join("\n");
+      }),
+    )
+  ).join("\n");
 
   const now = new Date().toUTCString();
 

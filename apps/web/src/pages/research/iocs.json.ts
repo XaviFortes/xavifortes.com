@@ -23,9 +23,9 @@ export const GET: APIRoute = async ({ site }) => {
     reports: posts
       .filter((p) => p.data.iocs.length > 0 || p.data.samples.length > 0)
       .map((p) => ({
-        id: p.slug,
+        id: p.id,
         title: p.data.title,
-        url: new URL(`research/${p.slug}/`, base).toString(),
+        url: new URL(`research/${p.id}/`, base).toString(),
         published: p.data.pubDate.toISOString().slice(0, 10),
         malware_family: p.data.malwareFamily ?? null,
         first_seen: p.data.firstSeen?.toISOString().slice(0, 10) ?? null,
