@@ -69,7 +69,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: opentofu/setup-opentofu@v1
+      - uses: opentofu/setup-opentofu@v2
         with:
           tofu_version: "1.8.0"
 
