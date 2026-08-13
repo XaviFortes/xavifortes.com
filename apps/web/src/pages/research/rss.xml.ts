@@ -71,7 +71,7 @@ export const GET: APIRoute = async ({ site }) => {
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Xavier Fortes — Research</title>
+    <title>Xavi Fortes — Research</title>
     <link>${escapeXml(new URL("research/", base).toString())}</link>
     <description>Malware analysis and reverse engineering notes.</description>
     <language>en</language>

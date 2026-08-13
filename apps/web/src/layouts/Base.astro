@@ -13,7 +13,7 @@ interface Props {
 }
 
 const {
-  title = "Xavier Fortes — Senior DevSecOps Engineer & Cloud Architect",
+  title = "Xavi Fortes — Senior DevSecOps Engineer & Cloud Architect",
   description = "Specializing in secure, scalable infrastructure, cloud migrations, and full-stack automation. k3s, Kubernetes, Terraform, ArgoCD, and more.",
   ogImage = "/og-default.png",
   ogType = "website",
@@ -34,7 +34,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="Xavier Fortes" />
+    <meta name="author" content="Xavi Fortes" />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
@@ -49,7 +49,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     {ogType === "article" && modifiedTime && (
       <meta property="article:modified_time" content={modifiedTime} />
     )}
-    {ogType === "article" && <meta property="article:author" content="Xavier Fortes" />}
+    {ogType === "article" && <meta property="article:author" content="Xavi Fortes" />}
     <meta property="og:site_name" content="xavifortes.com" />
 
     <!-- Twitter -->
@@ -62,7 +62,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link
       rel="alternate"
       type="application/rss+xml"
-      title="Xavier Fortes — Research"
+      title="Xavi Fortes — Research"
       href={new URL("research/rss.xml", Astro.site)}
     />
 
