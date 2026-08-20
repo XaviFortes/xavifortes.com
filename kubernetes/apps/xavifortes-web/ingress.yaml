@@ -44,16 +44,23 @@ spec:
 ---
 # cert-manager Certificate resource
 #
-# Uses DNS-01 solver via Cloudflare API — no port 80 required.
-# Wildcard covers any future subdomains without re-issuing.
+# Uses the HTTP-01 solver via the `letsencrypt-prod` ClusterIssuer — the only
+# issuer actually present in the cluster. Port 80 reaches Traefik through
+# Cloudflare and the GRA8 HAProxy (frontend http_front -> xavifortes_mad1_http),
+# so HTTP-01 validates without issue, as it does for the matrix/telemetry certs.
 #
-# Prerequisites: apply kubernetes/core/cert-manager/cloudflare-api-token.sops.yaml
-# and kubernetes/core/cert-manager/clusterissuer-dns01.yaml first.
+# NOTE: deliberately no wildcard. A wildcard requires DNS-01, which needs the
+# `letsencrypt-prod-dns01` ClusterIssuer from
+# kubernetes/core/cert-manager/clusterissuer-dns01.yaml. That manifest exists in
+# this repo but was never applied to the cluster, and is not part of any ArgoCD
+# Application. Pointing this Certificate at the missing issuer made every renewal
+# fail with `Referenced "ClusterIssuer" not found`, so the cert silently went
+# stale from its 2026-07-15 renewal time and expired on 2026-08-14 — which broke
+# Cloudflare Full (strict) with error 526.
 #
-# To migrate from HTTP-01 to DNS-01:
-#   kubectl delete secret xavifortes-tls -n xavifortes
-#   kubectl delete certificaterequest -n xavifortes --all
-#   ArgoCD will re-apply this manifest and cert-manager will re-issue via DNS-01.
+# The IngressRoute above only routes the apex and www, so no wildcard is needed.
+# If wildcard coverage is wanted later, apply the two cert-manager core manifests
+# first, then switch issuerRef back.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -62,8 +69,8 @@ metadata:
 spec:
   secretName: xavifortes-tls
   issuerRef:
-    name: letsencrypt-prod-dns01
+    name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
     - xavifortes.com
-    - "*.xavifortes.com"
+    - www.xavifortes.com
